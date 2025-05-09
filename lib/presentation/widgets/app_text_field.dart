@@ -23,6 +23,7 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       controller: textController,
+      style: TextStyle(color: Colors.black),
       obscureText: obscure,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.all(10),

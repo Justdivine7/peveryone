@@ -13,7 +13,10 @@ class AccountTypeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).indicatorColor,
       appBar: AppBar(
-        title: Text('Account Type'),
+        
+        title: Text('Account Type', 
+        // style: TextStyle(color: Colors.black)
+        ),
         centerTitle: true,
         forceMaterialTransparency: true,
       ),
@@ -27,7 +30,7 @@ class AccountTypeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    width: width(context, 0.44),
+                    width: width(context, 0.425),
                     height: height(context, 0.2),
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -48,10 +51,17 @@ class AccountTypeScreen extends StatelessWidget {
                         ),
                         Text(
                           'Free Account',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            // color: Colors.black,
+                            fontSize: 12,
+                          ),
                         ),
 
-                        Text("(\$0.00/month)"),
+                        Text(
+                          "(\$0.00/month)",
+                          // style: TextStyle(color: Colors.black),
+                        ),
                       ],
                     ),
                   ),
@@ -59,10 +69,10 @@ class AccountTypeScreen extends StatelessWidget {
                     clipBehavior: Clip.none,
                     children: [
                       Container(
-                        width: width(context, 0.44),
+                        width: width(context, 0.425),
                         height: height(context, 0.2),
 
-                        padding: EdgeInsets.all(20),
+                        padding: EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
                           border: Border.all(
@@ -84,13 +94,17 @@ class AccountTypeScreen extends StatelessWidget {
                               ),
                               child: Image.asset('assets/images/crown.png'),
                             ),
-                            SizedBox(height: height(context, 0.01)),
+                            // SizedBox(height: height(context, 0.01)),
                             Text(
                               'Anonymous Account',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                // color: Colors.black,
+                              ),
                             ),
-                            SizedBox(height: height(context, 0.01)),
 
+                            // SizedBox(height: height(context, 0.01)),
                             RichText(
                               text: TextSpan(
                                 style: TextStyle(color: Colors.black),
@@ -101,6 +115,7 @@ class AccountTypeScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20,
+                                      // color: Colors.black,
                                     ),
                                   ),
                                   TextSpan(text: ' /Month'),
@@ -140,7 +155,11 @@ class AccountTypeScreen extends StatelessWidget {
               SizedBox(height: height(context, 0.03)),
               Text(
                 'Choose Your Subscription',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  // color: Colors.black,
+                ),
               ),
               SizedBox(height: height(context, 0.03)),
               Container(

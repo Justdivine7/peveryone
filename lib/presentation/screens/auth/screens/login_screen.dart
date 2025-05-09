@@ -18,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
-  bool showPassword = false;
+  bool showPassword = true;
   @override
   void dispose() {
     super.dispose();
@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: Text(
                     "Let's sign you in",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                 ),
 
@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   suffixIcon: GestureDetector(
                     onTap: passwordVisible,
                     child: Icon(
-                      showPassword ? Icons.visibility : Icons.visibility_off,
+                      showPassword ? Icons.visibility_off : Icons.visibility,
                       color: Colors.black,
                     ),
                   ),

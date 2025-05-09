@@ -7,8 +7,8 @@ class AccountTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Table(
       columnWidths: const {
-        0: FlexColumnWidth(2.5),
-        1: FlexColumnWidth(0.6),
+        0: FlexColumnWidth(2.3),
+        1: FlexColumnWidth(0.4),
         2: FlexColumnWidth(1),
       },
 
@@ -53,7 +53,7 @@ class AccountTable extends StatelessWidget {
       child: Text(
         textAlign: center ? TextAlign.center : TextAlign.left,
         text,
-        style: TextStyle(fontWeight: FontWeight.w600),
+        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black, fontSize: 12),
       ),
     );
   }

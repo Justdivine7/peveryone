@@ -110,7 +110,7 @@ class _InboxScreenState extends State<InboxScreen> {
               SizedBox(height: height(context, 0.02)),
               Text('Recently'),
               SizedBox(
-                height: height(context, 0.13),
+                height: height(context, 0.15),
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
@@ -161,7 +161,7 @@ class _InboxScreenState extends State<InboxScreen> {
                         ),
                       );
                     },
-                    contentPadding: EdgeInsets.symmetric(vertical: 8),
+                    contentPadding: EdgeInsets.symmetric(vertical: 4),
                     leading: CircleAvatar(
                       backgroundImage: AssetImage(user['image']),
                       radius: 30,
