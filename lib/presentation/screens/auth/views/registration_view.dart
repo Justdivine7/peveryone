@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
-import 'package:peveryone/presentation/providers/general_providers/loading_providers/register_loading.dart';
- import 'package:peveryone/presentation/screens/auth/screens/login_screen.dart';
- import 'package:peveryone/presentation/widgets/app_big_button.dart';
+import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
+import 'package:peveryone/presentation/screens/auth/views/login_view.dart';
+import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';
 import 'package:peveryone/presentation/widgets/auth_logos.dart';
 import 'package:peveryone/presentation/widgets/loading_overlay.dart';
 
-class RegistrationScreen extends ConsumerStatefulWidget {
+class RegistrationView extends ConsumerStatefulWidget {
   static const routeName = '/registration-screen';
-  const RegistrationScreen({super.key});
+  const RegistrationView({super.key});
 
   @override
-  ConsumerState<RegistrationScreen> createState() => _RegistrationScreenState();
+  ConsumerState<RegistrationView> createState() => _RegistrationViewState();
 }
 
-class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
+class _RegistrationViewState extends ConsumerState<RegistrationView> {
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
@@ -61,7 +61,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
 
-      final loading = ref.read(registrationLoadingProvider.notifier);
+      final loading = ref.read(AuthLoader.registrationLoadingProvider.notifier);
       loading.state = true;
       final auth = ref.read(authRepositoryProvider);
       final user = await auth.signUp(
@@ -71,10 +71,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       loading.state = false;
       if (user != null && context.mounted) {
         await auth.sendEmailVerification(user);
-        Navigator.pushReplacementNamed(
-          context,
-          '/verify-email',
-        );
+        Navigator.pushReplacementNamed(context, '/verify-email');
       } else {
         loading.state = false;
       }
@@ -83,7 +80,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.read(registrationLoadingProvider);
+    final isLoading = ref.read(AuthLoader.registrationLoadingProvider);
     return Scaffold(
       body: LoadingOverlay(
         isLoading: isLoading,
@@ -153,7 +150,7 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                     Center(
                       child: AppTextButton(
                         onTap: () {
-                          Navigator.pushNamed(context, LoginScreen.routeName);
+                          Navigator.pushNamed(context, LoginView.routeName);
                         },
                         label: "Already have an account? Sign In",
                         textColor: Theme.of(context).dividerColor,

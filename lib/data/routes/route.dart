@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:peveryone/presentation/screens/auth/screens/account_type_screen.dart';
-import 'package:peveryone/presentation/screens/auth/screens/email_verification_screen.dart';
-import 'package:peveryone/presentation/screens/auth/screens/forgot_password_screen.dart';
-import 'package:peveryone/presentation/screens/auth/screens/login_screen.dart';
-import 'package:peveryone/presentation/screens/auth/screens/registration_screen.dart';
+import 'package:peveryone/presentation/screens/auth/views/account_type_view.dart';
+import 'package:peveryone/presentation/screens/auth/views/email_verification_view.dart';
+import 'package:peveryone/presentation/screens/auth/views/forgot_password_view.dart';
+import 'package:peveryone/presentation/screens/auth/views/login_view.dart';
+import 'package:peveryone/presentation/screens/auth/views/registration_view.dart';
 import 'package:peveryone/presentation/screens/chat/screens/chat_room.dart';
-import 'package:peveryone/presentation/screens/chat/screens/inbox_screen.dart';
+import 'package:peveryone/presentation/screens/chat/screens/inbox_view.dart';
 import 'package:peveryone/presentation/widgets/error_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case LoginScreen.routeName:
-      return MaterialPageRoute(builder: (context) => const LoginScreen());
-    case RegistrationScreen.routeName:
-      return MaterialPageRoute(
-        builder: (context) => const RegistrationScreen(),
-      );
-    case ForgotPasswordScreen.routeName:
-      return MaterialPageRoute(builder: (context) => ForgotPasswordScreen());
-    case AccountTypeScreen.routeName:
-      return MaterialPageRoute(builder: (context) => AccountTypeScreen());
-    case InboxScreen.routeName:
-      return MaterialPageRoute(builder: (context) => InboxScreen());
-    case EmailVerificationScreen.routeName:
-      return MaterialPageRoute(builder: (context) => EmailVerificationScreen());
+    case LoginView.routeName:
+      return MaterialPageRoute(builder: (context) => const LoginView());
+    case RegistrationView.routeName:
+      return MaterialPageRoute(builder: (context) => const RegistrationView());
+    case ForgotPasswordView.routeName:
+      return MaterialPageRoute(builder: (context) => ForgotPasswordView());
+    case AccountTypeView.routeName:
+      return MaterialPageRoute(builder: (context) => AccountTypeView());
+    case InboxView.routeName:
+      return MaterialPageRoute(builder: (context) => InboxView());
+    case EmailVerificationView.routeName:
+      return MaterialPageRoute(builder: (context) => EmailVerificationView());
     case ChatRoom.routeName:
       final userName = settings.arguments as String;
       return MaterialPageRoute(

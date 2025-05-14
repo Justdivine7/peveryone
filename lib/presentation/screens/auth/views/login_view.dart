@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
-import 'package:peveryone/presentation/providers/general_providers/loading_providers/login_loading.dart';
-import 'package:peveryone/presentation/screens/auth/screens/forgot_password_screen.dart';
-import 'package:peveryone/presentation/screens/auth/screens/registration_screen.dart';
- import 'package:peveryone/presentation/widgets/app_big_button.dart';
+import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
+import 'package:peveryone/presentation/screens/auth/views/forgot_password_view.dart';
+import 'package:peveryone/presentation/screens/auth/views/registration_view.dart';
+import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';
 import 'package:peveryone/presentation/widgets/auth_logos.dart';
 import 'package:peveryone/presentation/widgets/loading_overlay.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
+class LoginView extends ConsumerStatefulWidget {
   static const routeName = '/login-screen';
-  const LoginScreen({super.key});
+  const LoginView({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginView> createState() => _LoginViewState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginViewState extends ConsumerState<LoginView> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -43,11 +43,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return 'Email is required';
     }
 
-    // final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    // if (!emailRegex.hasMatch(value.trim())) {
-    //   return 'Enter a valid email address';
-    // }
-
     return null;
   }
 
@@ -66,7 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   void login() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
-      final loading = ref.read(loginLoadingProvider.notifier);
+      final loading = ref.read(AuthLoader.loginLoadingProvider.notifier);
       loading.state = true;
       final auth = ref.read(authRepositoryProvider);
       final user = await auth.login(
@@ -85,7 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(loginLoadingProvider);
+    final isLoading = ref.watch(AuthLoader.loginLoadingProvider);
     return Scaffold(
       body: LoadingOverlay(
         isLoading: isLoading,
@@ -179,7 +174,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           onTap: () {
                             Navigator.pushNamed(
                               context,
-                              ForgotPasswordScreen.routeName,
+                              ForgotPasswordView.routeName,
                             );
                           },
                           label: 'Forgot Password',
@@ -196,7 +191,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onTap: () {
                           Navigator.pushNamed(
                             context,
-                            RegistrationScreen.routeName,
+                            RegistrationView.routeName,
                           );
                         },
                         label: "Don't have an account? Sign Up",

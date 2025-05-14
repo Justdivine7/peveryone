@@ -5,25 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
-import 'package:peveryone/presentation/providers/general_providers/email_verified_provider.dart';
-import 'package:peveryone/presentation/providers/general_providers/loading_providers/verification_loader.dart';
-import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
+ import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
+ import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/loading_overlay.dart';
 import 'package:peveryone/presentation/widgets/toast_widget.dart';
 
-class EmailVerificationScreen extends ConsumerStatefulWidget {
+class EmailVerificationView extends ConsumerStatefulWidget {
   static const routeName = '/verify-email';
-  const EmailVerificationScreen({super.key});
+  const EmailVerificationView({super.key});
 
   @override
-  ConsumerState<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
+  ConsumerState<EmailVerificationView> createState() =>
+      _EmailVerificationViewState();
 }
 
-class _EmailVerificationScreenState
-    extends ConsumerState<EmailVerificationScreen> {
+class _EmailVerificationViewState
+    extends ConsumerState<EmailVerificationView> {
   late Timer _timer;
 
   @override
@@ -33,7 +32,7 @@ class _EmailVerificationScreenState
       await FirebaseAuth.instance.currentUser?.reload();
       final user = FirebaseAuth.instance.currentUser;
       if (user != null && user.emailVerified) {
-        final verified = ref.read(emailVerifiedProvider.notifier);
+        final verified = ref.read(AuthLoader.emailVerifiedProvider.notifier);
         verified.state = true;
         _timer.cancel();
       }
@@ -65,8 +64,8 @@ class _EmailVerificationScreenState
 
   @override
   Widget build(BuildContext context) {
-    final loading = ref.read(verificationLoadingProvider);
-    final isVerified = ref.read(emailVerifiedProvider);
+    final loading = ref.read(AuthLoader.verificationLoadingProvider);
+    final isVerified = ref.read(AuthLoader.emailVerifiedProvider);
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(16),

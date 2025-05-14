@@ -5,16 +5,16 @@ import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';
 
-class ForgotPasswordScreen extends ConsumerStatefulWidget {
+class ForgotPasswordView extends ConsumerStatefulWidget {
   static const routeName = '/forgot-password-screen';
-  const ForgotPasswordScreen({super.key});
+  const ForgotPasswordView({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordView> createState() =>
+      _ForgotPasswordViewState();
 }
 
-class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
   final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 

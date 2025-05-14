@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:peveryone/presentation/screens/auth/screens/login_screen.dart';
+import 'package:peveryone/presentation/screens/auth/views/login_view.dart';
  
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class SplashView extends StatefulWidget {
+  const SplashView({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashViewState extends State<SplashView> {
   @override
   void initState()   {
     super.initState();
      Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        MaterialPageRoute(builder: (context) => LoginView()),
       );
     });
   }

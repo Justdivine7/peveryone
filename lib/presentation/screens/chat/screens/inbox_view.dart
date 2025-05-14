@@ -7,16 +7,16 @@ import 'package:peveryone/presentation/screens/chat/screens/chat_room.dart';
 import 'package:peveryone/presentation/widgets/app_alert_dialog.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 
-class InboxScreen extends ConsumerStatefulWidget {
+class InboxView extends ConsumerStatefulWidget {
   static const routeName = '/inbox-screen';
 
-  const InboxScreen({super.key});
+  const InboxView({super.key});
 
   @override
-  ConsumerState<InboxScreen> createState() => _InboxScreenState();
+  ConsumerState<InboxView> createState() => _InboxViewState();
 }
 
-class _InboxScreenState extends ConsumerState<InboxScreen> {
+class _InboxViewState extends ConsumerState<InboxView> {
   List<Map<String, dynamic>> recently = [
     {'name': 'Julia', 'image': 'assets/images/image7.png'},
     {'name': 'Jenny', 'image': 'assets/images/image8.png'},

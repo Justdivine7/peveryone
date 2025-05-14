@@ -5,7 +5,7 @@ import 'package:peveryone/core/theme/app_theme.dart';
 import 'package:peveryone/data/routes/route.dart';
 import 'package:peveryone/firebase_options.dart';
 import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
-import 'package:peveryone/presentation/screens/auth/screens/auth_gate.dart';
+import 'package:peveryone/presentation/screens/auth/views/auth_gate.dart';
 import 'package:peveryone/presentation/widgets/toast_widget.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();

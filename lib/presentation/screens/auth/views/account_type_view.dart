@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
-import 'package:peveryone/presentation/screens/chat/screens/inbox_screen.dart';
+import 'package:peveryone/presentation/screens/chat/screens/inbox_view.dart';
 import 'package:peveryone/presentation/widgets/account_table.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 
-class AccountTypeScreen extends StatelessWidget {
+class AccountTypeView extends StatelessWidget {
   static const routeName = '/account-type';
-  const AccountTypeScreen({super.key});
+  const AccountTypeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).indicatorColor,
       appBar: AppBar(
-        
-        title: Text('Account Type', 
-        // style: TextStyle(color: Colors.black)
+        title: Text(
+          'Account Type',
+          // style: TextStyle(color: Colors.black)
         ),
         centerTitle: true,
         forceMaterialTransparency: true,
@@ -174,9 +174,9 @@ class AccountTypeScreen extends StatelessWidget {
               AppBigButton(
                 label: 'Next',
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => InboxScreen()),
-                  );
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (context) => InboxView()));
                 },
               ),
             ],
