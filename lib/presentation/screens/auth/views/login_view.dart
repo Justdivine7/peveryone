@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
-import 'package:peveryone/presentation/screens/auth/views/forgot_password_view.dart';
 import 'package:peveryone/presentation/screens/auth/views/registration_view.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
@@ -70,7 +69,10 @@ class _LoginViewState extends ConsumerState<LoginView> {
       );
 
       loading.state = false;
-      if (user != null) {
+      if (user?.emailVerified != null) {
+        auth.sendEmailVerification(user!);
+        Navigator.pushReplacementNamed(context, '/verify-email');
+      } else if (user != null) {
         Navigator.pushReplacementNamed(context, '/inbox-screen');
       } else {
         loading.state = false;
@@ -151,36 +153,12 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       ),
                     ),
                     SizedBox(height: height(context, 0.02)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Radio(
-                              value: false,
-                              groupValue: false,
-                              onChanged: (value) {},
-                              activeColor: Theme.of(context).focusColor,
-                            ),
-                            Text(
-                              'Remember Me',
-                              style: TextStyle(
-                                color: Theme.of(context).dividerColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        AppTextButton(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              ForgotPasswordView.routeName,
-                            );
-                          },
-                          label: 'Forgot Password',
-                          textColor: Colors.red,
-                        ),
-                      ],
+                    AppTextButton(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/forgot-password');
+                      },
+                      label: 'Forgot Password?',
+                      textColor: Colors.black,
                     ),
                     SizedBox(height: height(context, 0.02)),
                     AppBigButton(label: 'Login', onPressed: login),

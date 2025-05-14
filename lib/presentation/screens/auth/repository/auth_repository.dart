@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
 import 'package:peveryone/presentation/widgets/toast_widget.dart';
+import 'package:toastification/toastification.dart';
 
 class AuthRepository {
   final FirebaseAuth _auth;
@@ -38,10 +39,10 @@ class AuthRepository {
             .collection('users')
             .doc(user.uid)
             .set(appUser.toJson());
-        _toast.show('Account created successfully', type: ToastType.success);
+        _toast.show('Account created successfully', type: ToastificationType.success);
         return user;
       } else {
-        _toast.show('Registration failed', type: ToastType.error);
+        _toast.show('Registration failed', type: ToastificationType.error);
         return null; // Explicitly return null if user is null
       }
     } catch (e) {
@@ -62,7 +63,7 @@ class AuthRepository {
             errorMessage = 'Registration failed. Please try again.';
         }
       }
-      _toast.show(errorMessage, type: ToastType.error);
+      _toast.show(errorMessage, type: ToastificationType.error);
       print(e.toString());
       return null;
     }
@@ -74,11 +75,17 @@ class AuthRepository {
         email: email,
         password: password,
       );
-
-      _toast.show('Login successfully', type: ToastType.success);
+      if (userCredential.user?.emailVerified != null) {
+        _toast.show('Login successfully', type: ToastificationType.success);
+      } else if (userCredential.user != null) {
+        _toast.show(
+          'Login awaiting email verification',
+          type: ToastificationType.success,
+        );
+      }
       return userCredential.user;
     } catch (e) {
-      _toast.show('Login failed', type: ToastType.error);
+      _toast.show('Login failed', type: ToastificationType.error);
       return null;
     }
   }
@@ -88,13 +95,13 @@ class AuthRepository {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
       _toast.show(
         'Password reset email sent, check your mailbox',
-        type: ToastType.success,
+        type: ToastificationType.success,
       );
 
       print('Password reset email sent');
       return true;
     } on FirebaseAuthException catch (e) {
-      _toast.show('Failed to send reset email', type: ToastType.error);
+      _toast.show('Failed to send reset email', type: ToastificationType.error);
 
       print('Failed to send reset email: ${e.message}');
       return false;
@@ -104,7 +111,8 @@ class AuthRepository {
   Future<void> sendEmailVerification(User user) async {
     if (!user.emailVerified) {
       await user.sendEmailVerification();
-      _toast.show('Verification email sent', type: ToastType.success);
+      _toast.show('Verification email sent', type: ToastificationType.success);
+      
     }
   }
 
@@ -117,7 +125,7 @@ class AuthRepository {
   //   await user.sendEmailVerification();
   //   _toast.show(
   //     'Verification email sent. Please check your mail',
-  //     type: ToastType.info,
+  //     type: ToastificationType.info,
   //   );
 
   //   showDialog(
@@ -139,7 +147,7 @@ class AuthRepository {
   //     if (currentUser != null && currentUser.emailVerified) {
   //       timer.cancel();
   //       Navigator.of(context).pop();
-  //       _toast.show('Email verified', type: ToastType.success);
+  //       _toast.show('Email verified', type: ToastificationType.success);
   //       onVerified();
   //     }
   //   });
@@ -150,14 +158,12 @@ class AuthRepository {
   //       Navigator.of(context).pop();
   //       _toast.show(
   //         "Verification timed out. Try again.",
-  //         type: ToastType.error,
+  //         type: ToastificationType.error,
   //       );
   //       onTimeout();
   //     }
   //   });
   // }
-
-
 
   Future<void> signOut() async {
     await _auth.signOut();

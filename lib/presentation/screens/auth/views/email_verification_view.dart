@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
- import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
- import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
+import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
+import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/loading_overlay.dart';
-import 'package:peveryone/presentation/widgets/toast_widget.dart';
+import 'package:toastification/toastification.dart';
 
 class EmailVerificationView extends ConsumerStatefulWidget {
   static const routeName = '/verify-email';
@@ -21,8 +21,7 @@ class EmailVerificationView extends ConsumerStatefulWidget {
       _EmailVerificationViewState();
 }
 
-class _EmailVerificationViewState
-    extends ConsumerState<EmailVerificationView> {
+class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
   late Timer _timer;
 
   @override
@@ -46,9 +45,10 @@ class _EmailVerificationViewState
 
     if (user != null && !user.emailVerified) {
       await auth.sendEmailVerification(user);
-      toast.show('Verification email resent', type: ToastType.info);
+      toast.show('Verification email resent', type: ToastificationType.info);
     } else {
-      toast.show('Email already verified', type: ToastType.success);
+      toast.show('Email already verified', type: ToastificationType.success);
+      print('verified');
     }
   }
 
@@ -64,36 +64,43 @@ class _EmailVerificationViewState
 
   @override
   Widget build(BuildContext context) {
-    final loading = ref.read(AuthLoader.verificationLoadingProvider);
-    final isVerified = ref.read(AuthLoader.emailVerifiedProvider);
+    final loading = ref.watch(AuthLoader.verificationLoadingProvider);
+    final isVerified = ref.watch(AuthLoader.emailVerifiedProvider);
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: LoadingOverlay(
-          isLoading: loading,
-          child: Column(
-            children: [
-              Icon(
-                Icons.email_outlined,
-                size: height(context, 0.05),
-                color: Theme.of(context).hoverColor,
-              ),
-              SizedBox(height: height(context, 0.02)),
-              Text(
-                textAlign: TextAlign.center,
-                'A verification email has been sent to your email address. Please verify to continue.',
-              ),
-              SizedBox(height: height(context, 0.03)),
-              AppBigButton(
-                label: isVerified ? 'Continue to Home' : 'Waiting',
-                onPressed: isVerified ? proceedToHome : null,
-              ),
-              AppTextButton(
-                label: "Didn't get the link? Resend",
-                textColor: Theme.of(context).colorScheme.onSurface,
-                onTap: resendVerificationEmail,
-              ),
-            ],
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: LoadingOverlay(
+            isLoading: loading,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.mark_email_unread_outlined,
+
+                  size: height(context, 0.1),
+                  color: Theme.of(context).hoverColor,
+                ),
+                SizedBox(height: height(context, 0.02)),
+                Text(
+                  textAlign: TextAlign.center,
+                  'A verification email has been sent to your email address. Please verify to continue.',
+                ),
+                SizedBox(height: height(context, 0.03)),
+                AppBigButton(
+                  label: isVerified ? 'Continue to Home' : 'Waiting...',
+                  onPressed: isVerified ? proceedToHome : null,
+                ),
+                SizedBox(height: height(context, 0.03)),
+                AppTextButton(
+                  label: "Didn't get the link? Resend",
+                  fontWeight: FontWeight.w500,
+                  textColor: Theme.of(context).colorScheme.onSurface,
+                  onTap: resendVerificationEmail,
+                ),
+              ],
+            ),
           ),
         ),
       ),

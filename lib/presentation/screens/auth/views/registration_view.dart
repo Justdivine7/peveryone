@@ -161,7 +161,7 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     SizedBox(height: height(context, 0.03)),
                     Center(
                       child: Text(
-                        'Or Sign in with',
+                        'Or Sign up with',
                         style: TextStyle(color: Theme.of(context).dividerColor),
                       ),
                     ),

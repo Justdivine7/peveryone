@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
 
 class BaseView extends ConsumerStatefulWidget {
   const BaseView({super.key});
@@ -11,6 +12,7 @@ class BaseView extends ConsumerStatefulWidget {
 class _BaseView extends ConsumerState<BaseView> {
   @override
   Widget build(BuildContext context) {
+    final selectedIndex = ref.watch(AuthLoader.selectedIndexProvider);
     return Scaffold();
   }
 }

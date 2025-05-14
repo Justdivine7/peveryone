@@ -6,12 +6,11 @@ import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';
 
 class ForgotPasswordView extends ConsumerStatefulWidget {
-  static const routeName = '/forgot-password-screen';
+  static const routeName = '/forgot-password';
   const ForgotPasswordView({super.key});
 
   @override
-  ConsumerState<ForgotPasswordView> createState() =>
-      _ForgotPasswordViewState();
+  ConsumerState<ForgotPasswordView> createState() => _ForgotPasswordViewState();
 }
 
 class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
@@ -34,7 +33,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
         _emailController.text.trim(),
       );
       if (success && context.mounted) {
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, '/login-screen');
       }
     }
   }
@@ -42,6 +41,7 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -51,9 +51,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: height(context, 0.03)),
 
+                children: [
+                  // SizedBox(height: height(context, 0.03)),
                   Center(
                     child: Text(
                       "Reset your password",
@@ -83,6 +83,9 @@ class _ForgotPasswordViewState extends ConsumerState<ForgotPasswordView> {
                     textController: _emailController,
                   ),
                   SizedBox(height: height(context, 0.02)),
+                  Text('A password reset link will be sent to your mail'),
+                  SizedBox(height: height(context, 0.03)),
+
                   AppBigButton(label: 'Proceed', onPressed: forgotPassword),
                   SizedBox(height: height(context, 0.03)),
                 ],

@@ -22,7 +22,6 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
-      
       controller: textController,
       style: TextStyle(color: Colors.black),
       obscureText: obscure,
@@ -36,6 +35,11 @@ class AppTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIconColor: suffixIconColor,
         prefixIconColor: prefixIconColor,
+        errorBorder: OutlineInputBorder(
+          borderSide:
+              BorderSide
+                  .none, // removes red border when the user tries to proceed without inputting in textfield
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
