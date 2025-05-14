@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
-import 'package:peveryone/presentation/providers/login_loading.dart';
+import 'package:peveryone/presentation/providers/general_providers/loading_providers/login_loading.dart';
 import 'package:peveryone/presentation/screens/auth/screens/forgot_password_screen.dart';
 import 'package:peveryone/presentation/screens/auth/screens/registration_screen.dart';
-import 'package:peveryone/presentation/screens/chat/screens/inbox_screen.dart';
-import 'package:peveryone/presentation/widgets/app_big_button.dart';
+ import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';
 import 'package:peveryone/presentation/widgets/auth_logos.dart';
@@ -77,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       loading.state = false;
       if (user != null) {
-        Navigator.pushReplacementNamed(context, InboxScreen.routeName);
+        Navigator.pushReplacementNamed(context, '/inbox-screen');
       } else {
         loading.state = false;
       }

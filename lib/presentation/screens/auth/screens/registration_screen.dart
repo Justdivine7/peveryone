@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
-import 'package:peveryone/presentation/providers/register_loading.dart';
-import 'package:peveryone/presentation/screens/auth/screens/login_screen.dart';
-import 'package:peveryone/presentation/screens/chat/screens/inbox_screen.dart';
-import 'package:peveryone/presentation/widgets/app_big_button.dart';
+import 'package:peveryone/presentation/providers/general_providers/loading_providers/register_loading.dart';
+ import 'package:peveryone/presentation/screens/auth/screens/login_screen.dart';
+ import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';
 import 'package:peveryone/presentation/widgets/auth_logos.dart';
@@ -43,11 +42,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       return 'Email is required';
     }
 
-    // final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    // if (!emailRegex.hasMatch(value.trim())) {
-    //   return 'Enter a valid email address';
-    // }
-
     return null;
   }
 
@@ -76,20 +70,11 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
       );
       loading.state = false;
       if (user != null && context.mounted) {
-        await auth.emailVerificationAndMonitor(
-          context: context,
-          user: user,
-          onVerified: () {
-            Navigator.pushReplacementNamed(context, InboxScreen.routeName);
-          },
-          onTimeout: () {
-            Navigator.pushReplacementNamed(
-              context,
-              RegistrationScreen.routeName,
-            );
-          },
+        await auth.sendEmailVerification(user);
+        Navigator.pushReplacementNamed(
+          context,
+          '/verify-email',
         );
-        // Navigator.pushReplacementNamed(context, InboxScreen.routeName);
       } else {
         loading.state = false;
       }

@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lottie/lottie.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
 import 'package:peveryone/presentation/widgets/toast_widget.dart';
 
@@ -43,31 +41,28 @@ class AuthRepository {
         _toast.show('Account created successfully', type: ToastType.success);
         return user;
       } else {
-        _toast.show(
-          'Registration failed. User is null.',
-          type: ToastType.error,
-        );
+        _toast.show('Registration failed', type: ToastType.error);
         return null; // Explicitly return null if user is null
       }
     } catch (e) {
-      //   String errorMessage = 'Registration failed';
+      String errorMessage = 'Registration failed';
 
-      // if (e is FirebaseAuthException) {
-      // switch (e.code) {
-      //   case 'email-already-in-use':
-      //     errorMessage = 'The email address is already in use.';
-      //     break;
-      //   case 'weak-password':
-      //     errorMessage = 'The password is too weak.';
-      //     break;
-      //   case 'invalid-email':
-      //     errorMessage = 'The email address is not valid.';
-      //     break;
-      //   default:
-      //     errorMessage = 'Registration failed. Please try again.';
-      // }
-      // }
-      _toast.show('Registration failed', type: ToastType.error);
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'email-already-in-use':
+            errorMessage = 'The email address is already in use.';
+            break;
+          case 'weak-password':
+            errorMessage = 'The password is too weak.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'The email address is not valid.';
+            break;
+          default:
+            errorMessage = 'Registration failed. Please try again.';
+        }
+      }
+      _toast.show(errorMessage, type: ToastType.error);
       print(e.toString());
       return null;
     }
@@ -79,6 +74,7 @@ class AuthRepository {
         email: email,
         password: password,
       );
+
       _toast.show('Login successfully', type: ToastType.success);
       return userCredential.user;
     } catch (e) {
@@ -90,7 +86,10 @@ class AuthRepository {
   Future<bool> sendPasswordResetEmail(String email) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      _toast.show('Password reset email sent', type: ToastType.success);
+      _toast.show(
+        'Password reset email sent, check your mailbox',
+        type: ToastType.success,
+      );
 
       print('Password reset email sent');
       return true;
@@ -102,54 +101,63 @@ class AuthRepository {
     }
   }
 
-  Future<void> emailVerificationAndMonitor({
-    required BuildContext context,
-    required User user,
-    required VoidCallback onVerified,
-    required VoidCallback onTimeout,
-  }) async {
-    await user.sendEmailVerification();
-    _toast.show(
-      'Verification email sent. Please check your mail',
-      type: ToastType.info,
-    );
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder:
-          (_) => Center(
-            child: SizedBox(
-              height: 100,
-              width: 100,
-              child: Lottie.asset('assets/animations/loading.json'),
-            ),
-          ),
-    );
-
-    final timer = Timer.periodic(Duration(seconds: 3), (timer) async {
-      await user.reload();
-      final currentUser = _auth.currentUser;
-      if (currentUser != null && currentUser.emailVerified) {
-        timer.cancel();
-        Navigator.of(context).pop();
-        _toast.show('Email verified', type: ToastType.success);
-        onVerified();
-      }
-    });
-
-    Future.delayed(Duration(seconds: 30), () {
-      if (timer.isActive) {
-        timer.cancel();
-        Navigator.of(context).pop();
-        _toast.show(
-          "Verification timed out. Try again.",
-          type: ToastType.error,
-        );
-        onTimeout();
-      }
-    });
+  Future<void> sendEmailVerification(User user) async {
+    if (!user.emailVerified) {
+      await user.sendEmailVerification();
+      _toast.show('Verification email sent', type: ToastType.success);
+    }
   }
+
+  // Future<void> emailVerificationAndMonitor({
+  //   required BuildContext context,
+  //   required User user,
+  //   required VoidCallback onVerified,
+  //   required VoidCallback onTimeout,
+  // }) async {
+  //   await user.sendEmailVerification();
+  //   _toast.show(
+  //     'Verification email sent. Please check your mail',
+  //     type: ToastType.info,
+  //   );
+
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder:
+  //         (_) => Center(
+  //           child: SizedBox(
+  //             height: 100,
+  //             width: 100,
+  //             child: Lottie.asset('assets/animations/loading.json'),
+  //           ),
+  //         ),
+  //   );
+
+  //   final timer = Timer.periodic(Duration(seconds: 3), (timer) async {
+  //     await user.reload();
+  //     final currentUser = _auth.currentUser;
+  //     if (currentUser != null && currentUser.emailVerified) {
+  //       timer.cancel();
+  //       Navigator.of(context).pop();
+  //       _toast.show('Email verified', type: ToastType.success);
+  //       onVerified();
+  //     }
+  //   });
+
+  //   Future.delayed(Duration(seconds: 30), () {
+  //     if (timer.isActive) {
+  //       timer.cancel();
+  //       Navigator.of(context).pop();
+  //       _toast.show(
+  //         "Verification timed out. Try again.",
+  //         type: ToastType.error,
+  //       );
+  //       onTimeout();
+  //     }
+  //   });
+  // }
+
+
 
   Future<void> signOut() async {
     await _auth.signOut();

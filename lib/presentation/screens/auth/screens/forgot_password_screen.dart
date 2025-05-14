@@ -27,12 +27,15 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   }
 
   void forgotPassword() async {
-    final auth = ref.read(authRepositoryProvider);
-    final success = await auth.sendPasswordResetEmail(
-      _emailController.text.trim(),
-    );
-    if (success && context.mounted) {
-      Navigator.pop(context);
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
+      final auth = ref.read(authRepositoryProvider);
+      final success = await auth.sendPasswordResetEmail(
+        _emailController.text.trim(),
+      );
+      if (success && context.mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -40,47 +43,50 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                SizedBox(height: height(context, 0.03)),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: height(context, 0.03)),
 
-                Center(
-                  child: Text(
-                    "Reset your password",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                  Center(
+                    child: Text(
+                      "Reset your password",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                ),
 
-                SizedBox(height: height(context, 0.03)),
+                  SizedBox(height: height(context, 0.03)),
 
-                Text(
-                  'Email Address',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).dividerColor,
+                  Text(
+                    'Email Address',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).dividerColor,
+                    ),
                   ),
-                ),
-                SizedBox(height: height(context, 0.01)),
+                  SizedBox(height: height(context, 0.01)),
 
-                AppTextFormField(
-                  validator: validateEmail,
-                  obscure: false,
-                  hintText: 'Enter your email address',
-                  textController: _emailController,
-                ),
-                SizedBox(height: height(context, 0.02)),
-                AppBigButton(label: 'Proceed', onPressed: forgotPassword),
-                SizedBox(height: height(context, 0.03)),
-              ],
+                  AppTextFormField(
+                    validator: validateEmail,
+                    obscure: false,
+                    hintText: 'Enter your email address',
+                    textController: _emailController,
+                  ),
+                  SizedBox(height: height(context, 0.02)),
+                  AppBigButton(label: 'Proceed', onPressed: forgotPassword),
+                  SizedBox(height: height(context, 0.03)),
+                ],
+              ),
             ),
           ),
         ),

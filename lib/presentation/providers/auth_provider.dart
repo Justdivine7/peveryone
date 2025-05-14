@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
-import 'package:peveryone/presentation/providers/toast_provider.dart';
+import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
 import 'package:peveryone/presentation/screens/auth/repository/auth_repository.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -15,13 +15,13 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   );
 });
 
-final authStateProvider = StreamProvider<User?>((ref) {
+final authStateChangesProvider = StreamProvider<User?>((ref) {
   final repo = ref.watch(authRepositoryProvider);
   return repo.authStateChanges;
 });
 
 final appUserProvider = FutureProvider<AppUserModel?>((ref) async {
-  final user = await ref.watch(authStateProvider.future);
+  final user = await ref.watch(authStateChangesProvider.future);
   if (user == null) return null;
 
   final doc =
