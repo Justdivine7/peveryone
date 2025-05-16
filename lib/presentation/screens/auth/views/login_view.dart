@@ -69,12 +69,18 @@ class _LoginViewState extends ConsumerState<LoginView> {
       );
 
       loading.state = false;
-      if (user?.emailVerified != null) {
-        auth.sendEmailVerification(user!);
-        Navigator.pushReplacementNamed(context, '/verify-email');
-      } else if (user != null) {
-        Navigator.pushReplacementNamed(context, '/inbox-screen');
+      if (user != null) {
+        // Case 1: User exists, check email verification
+        if (!user.emailVerified) {
+          // If the user has not verified their email, send verification email and navigate to the verification screen
+          await auth.sendEmailVerification(user);
+          Navigator.pushReplacementNamed(context, '/verify-email');
+        } else {
+          // If the user has verified their email, navigate to the main view
+          Navigator.pushReplacementNamed(context, '/base-view');
+        }
       } else {
+        // If the user is null, stop loading or handle this case appropriately
         loading.state = false;
       }
     }

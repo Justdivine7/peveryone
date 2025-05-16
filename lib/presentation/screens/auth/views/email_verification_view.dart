@@ -45,9 +45,15 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
 
     if (user != null && !user.emailVerified) {
       await auth.sendEmailVerification(user);
-      toast.show('Verification email resent', type: ToastificationType.info);
+      toast.show(
+        message: 'Verification email resent',
+        type: ToastificationType.info,
+      );
     } else {
-      toast.show('Email already verified', type: ToastificationType.success);
+      toast.show(
+        message: 'Email already verified',
+        type: ToastificationType.success,
+      );
       print('verified');
     }
   }
@@ -59,7 +65,7 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
   }
 
   void proceedToHome() {
-    Navigator.pushReplacementNamed(context, '/inbox-screen');
+    Navigator.pushReplacementNamed(context, '/base-view');
   }
 
   @override

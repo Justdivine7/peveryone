@@ -8,7 +8,9 @@ abstract class AppUserModel with _$AppUserModel {
   const factory AppUserModel({
     required String uid,
     required String email,
-    String? displayName,
+    required String firstName,
+    required String lastName,
+
     String? photoUrl,
   }) = _AppUserModel;
 

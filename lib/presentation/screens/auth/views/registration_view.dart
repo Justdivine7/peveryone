@@ -19,6 +19,9 @@ class RegistrationView extends ConsumerStatefulWidget {
 }
 
 class _RegistrationViewState extends ConsumerState<RegistrationView> {
+  final TextEditingController _firstNameController = TextEditingController();
+
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
   final TextEditingController _passwordController = TextEditingController();
@@ -29,6 +32,8 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
   }
 
   void passwordVisible() {
@@ -37,9 +42,25 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
     });
   }
 
+  String? validateFirstName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Field is required';
+    }
+
+    return null;
+  }
+
+  String? validateLastName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Field is required';
+    }
+
+    return null;
+  }
+
   String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Email is required';
+      return 'Field is required';
     }
 
     return null;
@@ -47,7 +68,7 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
 
   String? validatePassword(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Password is required';
+      return 'Field is required';
     }
 
     if (value.length < 6) {
@@ -65,6 +86,8 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
       loading.state = true;
       final auth = ref.read(authRepositoryProvider);
       final user = await auth.signUp(
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -106,7 +129,37 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     ),
                     SizedBox(height: height(context, 0.03)),
                     Text(
-                      'Email Address',
+                      'First name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                    ),
+                    SizedBox(height: height(context, 0.01)),
+                    AppTextFormField(
+                      validator: validateFirstName,
+                      obscure: false,
+                      hintText: 'First name',
+                      textController: _firstNameController,
+                    ),
+                    Text(
+                      'Last name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                    ),
+                    SizedBox(height: height(context, 0.01)),
+                    AppTextFormField(
+                      validator: validateLastName,
+                      obscure: false,
+                      hintText: 'Last name',
+                      textController: _lastNameController,
+                    ),
+
+                    SizedBox(height: height(context, 0.01)),
+                    Text(
+                      'Email address',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Theme.of(context).dividerColor,
@@ -116,7 +169,7 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     AppTextFormField(
                       validator: validateEmail,
                       obscure: false,
-                      hintText: 'Enter your email address',
+                      hintText: 'Email address',
                       textController: _emailController,
                     ),
 
@@ -133,7 +186,7 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                       validator: validatePassword,
                       obscure: showPassword,
                       textController: _passwordController,
-                      hintText: 'Enter your password',
+                      hintText: 'Password',
                       suffixIcon: GestureDetector(
                         onTap: passwordVisible,
                         child: Icon(
@@ -158,14 +211,14 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: height(context, 0.03)),
+                    SizedBox(height: height(context, 0.02)),
                     Center(
                       child: Text(
                         'Or Sign up with',
                         style: TextStyle(color: Theme.of(context).dividerColor),
                       ),
                     ),
-                    SizedBox(height: height(context, 0.03)),
+                    SizedBox(height: height(context, 0.02)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -174,7 +227,7 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                         AuthLogos(image: 'assets/images/facebook.png'),
                       ],
                     ),
-                    SizedBox(height: height(context, 0.1)),
+                    SizedBox(height: height(context, 0.03)),
                     Center(
                       child: Text(
                         textAlign: TextAlign.center,

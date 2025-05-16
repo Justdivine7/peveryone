@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUserModel {
 
- String get uid; String get email; String? get displayName; String? get photoUrl;
+ String get uid; String get email; String get firstName; String get lastName; String? get photoUrl;
 /// Create a copy of AppUserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $AppUserModelCopyWith<AppUserModel> get copyWith => _$AppUserModelCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoUrl);
+int get hashCode => Object.hash(runtimeType,uid,email,firstName,lastName,photoUrl);
 
 @override
 String toString() {
-  return 'AppUserModel(uid: $uid, email: $email, displayName: $displayName, photoUrl: $photoUrl)';
+  return 'AppUserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $AppUserModelCopyWith<$Res>  {
   factory $AppUserModelCopyWith(AppUserModel value, $Res Function(AppUserModel) _then) = _$AppUserModelCopyWithImpl;
 @useResult
 $Res call({
- String uid, String email, String? displayName, String? photoUrl
+ String uid, String email, String firstName, String lastName, String? photoUrl
 });
 
 
@@ -66,12 +66,13 @@ class _$AppUserModelCopyWithImpl<$Res>
 
 /// Create a copy of AppUserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? uid = null,Object? email = null,Object? firstName = null,Object? lastName = null,Object? photoUrl = freezed,}) {
   return _then(_self.copyWith(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
+as String,firstName: null == firstName ? _self.firstName : firstName // ignore: cast_nullable_to_non_nullable
+as String,lastName: null == lastName ? _self.lastName : lastName // ignore: cast_nullable_to_non_nullable
+as String,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -83,12 +84,13 @@ as String?,
 @JsonSerializable()
 
 class _AppUserModel implements AppUserModel {
-  const _AppUserModel({required this.uid, required this.email, this.displayName, this.photoUrl});
+  const _AppUserModel({required this.uid, required this.email, required this.firstName, required this.lastName, this.photoUrl});
   factory _AppUserModel.fromJson(Map<String, dynamic> json) => _$AppUserModelFromJson(json);
 
 @override final  String uid;
 @override final  String email;
-@override final  String? displayName;
+@override final  String firstName;
+@override final  String lastName;
 @override final  String? photoUrl;
 
 /// Create a copy of AppUserModel
@@ -104,16 +106,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUserModel&&(identical(other.uid, uid) || other.uid == uid)&&(identical(other.email, email) || other.email == email)&&(identical(other.firstName, firstName) || other.firstName == firstName)&&(identical(other.lastName, lastName) || other.lastName == lastName)&&(identical(other.photoUrl, photoUrl) || other.photoUrl == photoUrl));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,uid,email,displayName,photoUrl);
+int get hashCode => Object.hash(runtimeType,uid,email,firstName,lastName,photoUrl);
 
 @override
 String toString() {
-  return 'AppUserModel(uid: $uid, email: $email, displayName: $displayName, photoUrl: $photoUrl)';
+  return 'AppUserModel(uid: $uid, email: $email, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl)';
 }
 
 
@@ -124,7 +126,7 @@ abstract mixin class _$AppUserModelCopyWith<$Res> implements $AppUserModelCopyWi
   factory _$AppUserModelCopyWith(_AppUserModel value, $Res Function(_AppUserModel) _then) = __$AppUserModelCopyWithImpl;
 @override @useResult
 $Res call({
- String uid, String email, String? displayName, String? photoUrl
+ String uid, String email, String firstName, String lastName, String? photoUrl
 });
 
 
@@ -141,12 +143,13 @@ class __$AppUserModelCopyWithImpl<$Res>
 
 /// Create a copy of AppUserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? displayName = freezed,Object? photoUrl = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? uid = null,Object? email = null,Object? firstName = null,Object? lastName = null,Object? photoUrl = freezed,}) {
   return _then(_AppUserModel(
 uid: null == uid ? _self.uid : uid // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
-as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
+as String,firstName: null == firstName ? _self.firstName : firstName // ignore: cast_nullable_to_non_nullable
+as String,lastName: null == lastName ? _self.lastName : lastName // ignore: cast_nullable_to_non_nullable
+as String,photoUrl: freezed == photoUrl ? _self.photoUrl : photoUrl // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -10,5 +10,5 @@ class AuthLoader {
   );
   static final emailVerifiedProvider = StateProvider<bool>((ref) => false);
 
-  static final selectedIndexProvider = Provider<int>((ref) => 0);
+  static final selectedIndexProvider = StateProvider<int>((ref) => 0);
 }

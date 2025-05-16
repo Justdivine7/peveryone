@@ -6,16 +6,14 @@ import 'package:toastification/toastification.dart';
 class ToastWidget {
   final GlobalKey<NavigatorState> navigatorKey;
   ToastWidget(this.navigatorKey);
-  void show(
-    String message, {
-    ToastificationType type = ToastificationType.info,
-  }) {
+  void show({required String message, required ToastificationType type}) {
     final context = navigatorKey.currentContext;
     if (context == null) return;
 
     toastification.show(
       context: context,
       style: ToastificationStyle.flatColored,
+      type: type,
       title: Text(message),
       autoCloseDuration: Duration(seconds: 3),
       alignment: Alignment.topCenter,

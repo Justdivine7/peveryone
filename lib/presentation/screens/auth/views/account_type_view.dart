@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:peveryone/core/constants/ui_helpers.dart';
-import 'package:peveryone/presentation/screens/chat/screens/inbox_view.dart';
+import 'package:peveryone/presentation/screens/chat/views/inbox_view.dart';
 import 'package:peveryone/presentation/widgets/account_table.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 

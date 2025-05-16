@@ -4,8 +4,11 @@ import 'package:peveryone/presentation/screens/auth/views/email_verification_vie
 import 'package:peveryone/presentation/screens/auth/views/forgot_password_view.dart';
 import 'package:peveryone/presentation/screens/auth/views/login_view.dart';
 import 'package:peveryone/presentation/screens/auth/views/registration_view.dart';
-import 'package:peveryone/presentation/screens/chat/screens/chat_room.dart';
-import 'package:peveryone/presentation/screens/chat/screens/inbox_view.dart';
+import 'package:peveryone/presentation/screens/base/base_view.dart';
+import 'package:peveryone/presentation/screens/chat/views/chat_room.dart';
+import 'package:peveryone/presentation/screens/chat/views/inbox_view.dart';
+import 'package:peveryone/presentation/screens/home/view/home_view.dart';
+import 'package:peveryone/presentation/screens/user_profile/user_profile_view.dart';
 import 'package:peveryone/presentation/widgets/error_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -24,9 +27,18 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => EmailVerificationView());
     case ChatRoom.routeName:
       final userName = settings.arguments as String;
+      final senderId = settings.arguments as String;
+      final receiverId = settings.arguments as String;
       return MaterialPageRoute(
-        builder: (context) => ChatRoom(userName: userName),
+        builder:
+            (context) => ChatRoom(senderId, receiverId, userName: userName),
       );
+    case UserProfileView.routeName:
+      return MaterialPageRoute(builder: (context) => UserProfileView());
+    case HomeView.routeName:
+      return MaterialPageRoute(builder: (context) => HomeView());
+    case BaseView.routeName:
+      return MaterialPageRoute(builder: (context) => BaseView());
     default:
       return MaterialPageRoute(
         builder:
