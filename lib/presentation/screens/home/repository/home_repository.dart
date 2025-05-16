@@ -1,16 +1,15 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime/mime.dart';
-import 'package:peveryone/core/constants/chat_helpers.dart';
 import 'package:peveryone/core/constants/media_compresser.dart';
 import 'package:peveryone/core/constants/message_enum.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:peveryone/data/model/message_model/message_model.dart';
+import 'package:peveryone/data/model/inbox_model/inbox_model.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeRepository {
@@ -26,6 +25,11 @@ class HomeRepository {
         .toList();
   }
 
+  Future<AppUserModel> fetchUserById(String userId) async {
+    final doc = await _firestore.collection('users').doc(userId).get();
+    return AppUserModel.fromJson(doc.data()!);
+  }
+
   String _getChatId(String user1, String user2) {
     final ids = [user1, user2]..sort();
     return '${ids[0]}_${ids[1]}';
@@ -39,6 +43,7 @@ class HomeRepository {
   }) async {
     final chatId = _getChatId(senderId, receiverId);
     final messageId = const Uuid().v4();
+    final sentAt = DateTime.now();
 
     final message = MessageModel(
       id: messageId,
@@ -46,17 +51,84 @@ class HomeRepository {
       receiverId: receiverId,
       content: content,
       type: type,
-      sentAt: DateTime.now(),
-      seen: true,
+      sentAt: sentAt,
+      seen: false,
     );
 
-    await _firestore
+    final messageRef = _firestore
         .collection('chats')
         .doc(chatId)
         .collection('messages')
-        .doc(messageId)
-        .set(message.toJson());
+        .doc(messageId);
+
+    final chatRef = _firestore.collection('chats').doc(chatId);
+
+    await _firestore.runTransaction((transaction) async {
+      transaction.set(messageRef, message.toJson());
+      transaction.set(chatRef, {
+        'lastMessage': content,
+        'lastSenderId': senderId,
+        'lastTimestamp': sentAt,
+        'participants': [senderId, receiverId],
+        'unreadCounts.$receiverId': FieldValue.increment(1),
+        'unreadCounts.$senderId': FieldValue.increment(
+          0,
+        ), // Reset sender's own unread count
+      }, SetOptions(merge: true));
+    });
   }
+
+  Future<void> markMessagesAsRead(String senderId, String receiverId) async {
+    final chatId = _getChatId(senderId, receiverId);
+    await _firestore.collection('chats').doc(chatId).update({
+      'unreadCounts.$senderId': 0,
+    });
+  }
+
+ Stream<List<InboxModel>> getInbox(String userId) async* {
+  await for (final snapshot in _firestore
+      .collection('chats')
+      .where('lastMessage', isNotEqualTo: null) // Ensure lastMessage exists
+      .orderBy('lastTimestamp', descending: true)
+      .snapshots()) {
+    final List<InboxModel> list = [];
+
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+      final chatId = doc.id;
+
+      // Defensive parsing to avoid crashing on unexpected structure
+      try {
+        final ids = chatId.split('_');
+        final otherUserId = ids.firstWhere((id) => id != userId);
+
+        final user = await fetchUserById(otherUserId);
+
+        final unreadCounts = data['unreadCounts'] as Map<String, dynamic>? ?? {};
+        final unreadCount = unreadCounts[userId] ?? 0;
+
+        list.add(
+          InboxModel(
+            chatId: chatId,
+            chatWith: otherUserId,
+            chatWithName: user.firstName,
+            chatWithPhotoUrl: user.photoUrl ?? '',
+            lastMessage: data['lastMessage'] ?? '',
+            lastSenderId: data['lastSenderId'] ?? '',
+            lastTimestamp: (data['lastTimestamp'] as Timestamp).toDate(),
+            unreadCount: unreadCount,
+          ),
+        );
+      } catch (e) {
+        debugPrint('Error parsing inbox document $chatId: $e');
+        continue;
+      }
+    }
+
+    yield list;
+  }
+}
+
 
   Future<String> uploadFile(File file, MessageType type) async {
     final fileName = const Uuid().v4();
@@ -71,7 +143,7 @@ class HomeRepository {
         .collection('chats')
         .doc(chatId)
         .collection('messages')
-        .orderBy('timestamp')
+        .orderBy('sentAt')
         .snapshots()
         .map(
           (snapshot) =>
@@ -100,12 +172,16 @@ class HomeRepository {
         compressedFile = await compressImage(file);
       }
 
-      await sendMedia(
+      final url = await uploadFile(
         compressedFile,
         isVideo ? MessageType.video : MessageType.image,
-        senderId,
-        receiverId,
-        ref,
+      );
+
+      await sendMessage(
+        senderId: senderId,
+        receiverId: receiverId,
+        content: url,
+        type: isVideo ? MessageType.video : MessageType.image,
       );
     }
   }

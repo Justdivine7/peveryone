@@ -25,7 +25,7 @@ class _BaseView extends ConsumerState<BaseView> {
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         color: Theme.of(context).hoverColor,
-        // animationDuration: Duration(milliseconds: 300),
+        animationDuration: Duration(milliseconds: 300),
         items: [
           Icon(Icons.home, color: Colors.white),
           Icon(Icons.mail_rounded, color: Colors.white),

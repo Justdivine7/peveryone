@@ -26,12 +26,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case EmailVerificationView.routeName:
       return MaterialPageRoute(builder: (context) => EmailVerificationView());
     case ChatRoom.routeName:
-      final userName = settings.arguments as String;
-      final senderId = settings.arguments as String;
-      final receiverId = settings.arguments as String;
+      final args = settings.arguments as ChatRoom;
       return MaterialPageRoute(
         builder:
-            (context) => ChatRoom(senderId, receiverId, userName: userName),
+            (context) => ChatRoom(
+              senderId: args.senderId,
+              receiverId: args.receiverId,
+              firstName: args.firstName,
+            ),
       );
     case UserProfileView.routeName:
       return MaterialPageRoute(builder: (context) => UserProfileView());

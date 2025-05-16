@@ -14,6 +14,7 @@ class AuthRepository {
   final ToastWidget _toast;
   AuthRepository(this._auth, this._firestore, this._googleSignIn, this._toast);
 
+  // User? get userDetails => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
   Future<User?> signUp({
     required String email,

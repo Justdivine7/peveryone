@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:peveryone/core/constants/chat_helpers.dart';
-import 'package:peveryone/core/constants/ui_helpers.dart';
+import 'package:peveryone/core/constants/extensions.dart';
+import 'package:peveryone/core/helpers/chat_helpers.dart';
+import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/home_view_provider.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 import 'package:peveryone/presentation/widgets/chat_bubble.dart';
@@ -11,14 +12,14 @@ import 'package:peveryone/presentation/widgets/error_screen.dart';
 class ChatRoom extends ConsumerStatefulWidget {
   final String senderId;
   final String receiverId;
-  final String userName;
+  final String firstName;
   static const routeName = '/chat-room';
 
-  const ChatRoom(
-    this.senderId,
-    this.receiverId, {
+  const ChatRoom({
     super.key,
-    required this.userName,
+    required this.firstName,
+    required this.senderId,
+    required this.receiverId,
   });
 
   @override
@@ -63,7 +64,7 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
     final messagesList = ref.watch(messagesStreamProvider(chatKey));
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.userName),
+        title: Text(widget.firstName.capitalize()),
         forceMaterialTransparency: true,
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Iconsax.add_square)),

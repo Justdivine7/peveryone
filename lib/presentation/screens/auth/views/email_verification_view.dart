@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:peveryone/core/constants/ui_helpers.dart';
+import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
 import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';

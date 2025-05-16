@@ -84,7 +84,7 @@ as String?,
 @JsonSerializable()
 
 class _AppUserModel implements AppUserModel {
-  const _AppUserModel({required this.uid, required this.email, required this.firstName, required this.lastName, this.photoUrl});
+  const _AppUserModel({required this.uid, required this.email, required this.firstName, required this.lastName, required this.photoUrl});
   factory _AppUserModel.fromJson(Map<String, dynamic> json) => _$AppUserModelFromJson(json);
 
 @override final  String uid;

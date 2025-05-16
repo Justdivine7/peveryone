@@ -1,16 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:peveryone/core/constants/extensions.dart';
-import 'package:peveryone/core/constants/ui_helpers.dart';
+import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/home_view_provider.dart';
+import 'package:peveryone/presentation/screens/chat/views/chat_room.dart';
 
 class HomeView extends ConsumerWidget {
   static const routeName = '/home-view';
   const HomeView({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final auth = FirebaseAuth.instance.currentUser;
+
     final usersProvider = ref.watch(allUsersProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -21,7 +24,7 @@ class HomeView extends ConsumerWidget {
               padding: EdgeInsets.all(12),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                // mainAxisExtent: 2,
+
                 crossAxisSpacing: 6,
                 mainAxisSpacing: 4,
               ),
@@ -32,7 +35,6 @@ class HomeView extends ConsumerWidget {
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    // border: Border.all(color:Theme.of(context).hoverColor),
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(
@@ -78,10 +80,15 @@ class HomeView extends ConsumerWidget {
                                 backgroundColor: Theme.of(context).hoverColor,
                               ),
                               onPressed: () {
-                                Navigator.pushReplacementNamed(
+                                Navigator.pushNamed(
                                   context,
                                   '/chat-room',
-                                  arguments: user.firstName,
+
+                                  arguments: ChatRoom(
+                                    senderId: auth?.uid ?? '',
+                                    receiverId: user.uid,
+                                    firstName: user.firstName,
+                                  ),
                                 );
                               },
                               child: Icon(
@@ -98,22 +105,23 @@ class HomeView extends ConsumerWidget {
                 );
               },
             ),
-        error:
-            (e, _) => Center(
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.wifi_off_rounded,
-                    size: height(context, 0.2),
-                    color: Theme.of(context).hoverColor,
-                  ),
-                  SizedBox(height: height(context, 0.02)),
-                  Text('Error: $e'),
-                ],
-              ),
+        error: (e, StackTrace) {
+          print(e.toString());
+          return Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.wifi_off_rounded,
+                  size: height(context, 0.2),
+                  color: Theme.of(context).hoverColor,
+                ),
+                SizedBox(height: height(context, 0.02)),
+                Text('Error: $e'),
+              ],
             ),
-        loading:
-            () => Center(child: Image.asset('assets/animations/loading.json')),
+          );
+        },
+        loading: () => Center(child: CircularProgressIndicator()),
       ),
     );
   }

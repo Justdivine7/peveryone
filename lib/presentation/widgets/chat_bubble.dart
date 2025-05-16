@@ -25,7 +25,11 @@ class ChatBubble extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (message.type == MessageType.text) Text(message.content),
+            if (message.type == MessageType.text)
+              Text(
+                message.content,
+                style: TextStyle(color: isMe ? Colors.white : Colors.black),
+              ),
             if (message.type == MessageType.image)
               Image.network(message.content),
             if (message.type == MessageType.video) Icon(Icons.videocam),

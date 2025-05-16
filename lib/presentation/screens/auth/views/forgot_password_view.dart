@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:peveryone/core/constants/ui_helpers.dart';
+import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_form_field.dart';

@@ -11,7 +11,7 @@ abstract class AppUserModel with _$AppUserModel {
     required String firstName,
     required String lastName,
 
-    String? photoUrl,
+   required String? photoUrl,
   }) = _AppUserModel;
 
   factory AppUserModel.fromJson(Map<String, dynamic> json) =>
