@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InboxModel {
 
- String get chatId; String get chatWith; String get chatWithName; String? get chatWithPhotoUrl; String get lastMessage; String get lastSenderId; DateTime get lastTimestamp; int get unreadCount;
+ String get chatId; String get chatWith; String get chatWithName; String? get chatWithPhotoUrl; String get lastMessage; String get lastSenderId; DateTime get lastTimestamp; int get unreadCount; int get messageCount; MessageType get lastMessageType;
 /// Create a copy of InboxModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $InboxModelCopyWith<InboxModel> get copyWith => _$InboxModelCopyWithImpl<InboxMo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InboxModel&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.chatWith, chatWith) || other.chatWith == chatWith)&&(identical(other.chatWithName, chatWithName) || other.chatWithName == chatWithName)&&(identical(other.chatWithPhotoUrl, chatWithPhotoUrl) || other.chatWithPhotoUrl == chatWithPhotoUrl)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.lastSenderId, lastSenderId) || other.lastSenderId == lastSenderId)&&(identical(other.lastTimestamp, lastTimestamp) || other.lastTimestamp == lastTimestamp)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InboxModel&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.chatWith, chatWith) || other.chatWith == chatWith)&&(identical(other.chatWithName, chatWithName) || other.chatWithName == chatWithName)&&(identical(other.chatWithPhotoUrl, chatWithPhotoUrl) || other.chatWithPhotoUrl == chatWithPhotoUrl)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.lastSenderId, lastSenderId) || other.lastSenderId == lastSenderId)&&(identical(other.lastTimestamp, lastTimestamp) || other.lastTimestamp == lastTimestamp)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.lastMessageType, lastMessageType) || other.lastMessageType == lastMessageType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,chatId,chatWith,chatWithName,chatWithPhotoUrl,lastMessage,lastSenderId,lastTimestamp,unreadCount);
+int get hashCode => Object.hash(runtimeType,chatId,chatWith,chatWithName,chatWithPhotoUrl,lastMessage,lastSenderId,lastTimestamp,unreadCount,messageCount,lastMessageType);
 
 @override
 String toString() {
-  return 'InboxModel(chatId: $chatId, chatWith: $chatWith, chatWithName: $chatWithName, chatWithPhotoUrl: $chatWithPhotoUrl, lastMessage: $lastMessage, lastSenderId: $lastSenderId, lastTimestamp: $lastTimestamp, unreadCount: $unreadCount)';
+  return 'InboxModel(chatId: $chatId, chatWith: $chatWith, chatWithName: $chatWithName, chatWithPhotoUrl: $chatWithPhotoUrl, lastMessage: $lastMessage, lastSenderId: $lastSenderId, lastTimestamp: $lastTimestamp, unreadCount: $unreadCount, messageCount: $messageCount, lastMessageType: $lastMessageType)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $InboxModelCopyWith<$Res>  {
   factory $InboxModelCopyWith(InboxModel value, $Res Function(InboxModel) _then) = _$InboxModelCopyWithImpl;
 @useResult
 $Res call({
- String chatId, String chatWith, String chatWithName, String? chatWithPhotoUrl, String lastMessage, String lastSenderId, DateTime lastTimestamp, int unreadCount
+ String chatId, String chatWith, String chatWithName, String? chatWithPhotoUrl, String lastMessage, String lastSenderId, DateTime lastTimestamp, int unreadCount, int messageCount, MessageType lastMessageType
 });
 
 
@@ -66,7 +66,7 @@ class _$InboxModelCopyWithImpl<$Res>
 
 /// Create a copy of InboxModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? chatId = null,Object? chatWith = null,Object? chatWithName = null,Object? chatWithPhotoUrl = freezed,Object? lastMessage = null,Object? lastSenderId = null,Object? lastTimestamp = null,Object? unreadCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? chatId = null,Object? chatWith = null,Object? chatWithName = null,Object? chatWithPhotoUrl = freezed,Object? lastMessage = null,Object? lastSenderId = null,Object? lastTimestamp = null,Object? unreadCount = null,Object? messageCount = null,Object? lastMessageType = null,}) {
   return _then(_self.copyWith(
 chatId: null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
 as String,chatWith: null == chatWith ? _self.chatWith : chatWith // ignore: cast_nullable_to_non_nullable
@@ -76,7 +76,9 @@ as String?,lastMessage: null == lastMessage ? _self.lastMessage : lastMessage //
 as String,lastSenderId: null == lastSenderId ? _self.lastSenderId : lastSenderId // ignore: cast_nullable_to_non_nullable
 as String,lastTimestamp: null == lastTimestamp ? _self.lastTimestamp : lastTimestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,unreadCount: null == unreadCount ? _self.unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,messageCount: null == messageCount ? _self.messageCount : messageCount // ignore: cast_nullable_to_non_nullable
+as int,lastMessageType: null == lastMessageType ? _self.lastMessageType : lastMessageType // ignore: cast_nullable_to_non_nullable
+as MessageType,
   ));
 }
 
@@ -87,7 +89,7 @@ as int,
 @JsonSerializable()
 
 class _InboxModel implements InboxModel {
-  const _InboxModel({required this.chatId, required this.chatWith, required this.chatWithName, required this.chatWithPhotoUrl, required this.lastMessage, required this.lastSenderId, required this.lastTimestamp, required this.unreadCount});
+  const _InboxModel({required this.chatId, required this.chatWith, required this.chatWithName, required this.chatWithPhotoUrl, required this.lastMessage, required this.lastSenderId, required this.lastTimestamp, required this.unreadCount, required this.messageCount, required this.lastMessageType});
   factory _InboxModel.fromJson(Map<String, dynamic> json) => _$InboxModelFromJson(json);
 
 @override final  String chatId;
@@ -98,6 +100,8 @@ class _InboxModel implements InboxModel {
 @override final  String lastSenderId;
 @override final  DateTime lastTimestamp;
 @override final  int unreadCount;
+@override final  int messageCount;
+@override final  MessageType lastMessageType;
 
 /// Create a copy of InboxModel
 /// with the given fields replaced by the non-null parameter values.
@@ -112,16 +116,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InboxModel&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.chatWith, chatWith) || other.chatWith == chatWith)&&(identical(other.chatWithName, chatWithName) || other.chatWithName == chatWithName)&&(identical(other.chatWithPhotoUrl, chatWithPhotoUrl) || other.chatWithPhotoUrl == chatWithPhotoUrl)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.lastSenderId, lastSenderId) || other.lastSenderId == lastSenderId)&&(identical(other.lastTimestamp, lastTimestamp) || other.lastTimestamp == lastTimestamp)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InboxModel&&(identical(other.chatId, chatId) || other.chatId == chatId)&&(identical(other.chatWith, chatWith) || other.chatWith == chatWith)&&(identical(other.chatWithName, chatWithName) || other.chatWithName == chatWithName)&&(identical(other.chatWithPhotoUrl, chatWithPhotoUrl) || other.chatWithPhotoUrl == chatWithPhotoUrl)&&(identical(other.lastMessage, lastMessage) || other.lastMessage == lastMessage)&&(identical(other.lastSenderId, lastSenderId) || other.lastSenderId == lastSenderId)&&(identical(other.lastTimestamp, lastTimestamp) || other.lastTimestamp == lastTimestamp)&&(identical(other.unreadCount, unreadCount) || other.unreadCount == unreadCount)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.lastMessageType, lastMessageType) || other.lastMessageType == lastMessageType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,chatId,chatWith,chatWithName,chatWithPhotoUrl,lastMessage,lastSenderId,lastTimestamp,unreadCount);
+int get hashCode => Object.hash(runtimeType,chatId,chatWith,chatWithName,chatWithPhotoUrl,lastMessage,lastSenderId,lastTimestamp,unreadCount,messageCount,lastMessageType);
 
 @override
 String toString() {
-  return 'InboxModel(chatId: $chatId, chatWith: $chatWith, chatWithName: $chatWithName, chatWithPhotoUrl: $chatWithPhotoUrl, lastMessage: $lastMessage, lastSenderId: $lastSenderId, lastTimestamp: $lastTimestamp, unreadCount: $unreadCount)';
+  return 'InboxModel(chatId: $chatId, chatWith: $chatWith, chatWithName: $chatWithName, chatWithPhotoUrl: $chatWithPhotoUrl, lastMessage: $lastMessage, lastSenderId: $lastSenderId, lastTimestamp: $lastTimestamp, unreadCount: $unreadCount, messageCount: $messageCount, lastMessageType: $lastMessageType)';
 }
 
 
@@ -132,7 +136,7 @@ abstract mixin class _$InboxModelCopyWith<$Res> implements $InboxModelCopyWith<$
   factory _$InboxModelCopyWith(_InboxModel value, $Res Function(_InboxModel) _then) = __$InboxModelCopyWithImpl;
 @override @useResult
 $Res call({
- String chatId, String chatWith, String chatWithName, String? chatWithPhotoUrl, String lastMessage, String lastSenderId, DateTime lastTimestamp, int unreadCount
+ String chatId, String chatWith, String chatWithName, String? chatWithPhotoUrl, String lastMessage, String lastSenderId, DateTime lastTimestamp, int unreadCount, int messageCount, MessageType lastMessageType
 });
 
 
@@ -149,7 +153,7 @@ class __$InboxModelCopyWithImpl<$Res>
 
 /// Create a copy of InboxModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? chatId = null,Object? chatWith = null,Object? chatWithName = null,Object? chatWithPhotoUrl = freezed,Object? lastMessage = null,Object? lastSenderId = null,Object? lastTimestamp = null,Object? unreadCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? chatId = null,Object? chatWith = null,Object? chatWithName = null,Object? chatWithPhotoUrl = freezed,Object? lastMessage = null,Object? lastSenderId = null,Object? lastTimestamp = null,Object? unreadCount = null,Object? messageCount = null,Object? lastMessageType = null,}) {
   return _then(_InboxModel(
 chatId: null == chatId ? _self.chatId : chatId // ignore: cast_nullable_to_non_nullable
 as String,chatWith: null == chatWith ? _self.chatWith : chatWith // ignore: cast_nullable_to_non_nullable
@@ -159,7 +163,9 @@ as String?,lastMessage: null == lastMessage ? _self.lastMessage : lastMessage //
 as String,lastSenderId: null == lastSenderId ? _self.lastSenderId : lastSenderId // ignore: cast_nullable_to_non_nullable
 as String,lastTimestamp: null == lastTimestamp ? _self.lastTimestamp : lastTimestamp // ignore: cast_nullable_to_non_nullable
 as DateTime,unreadCount: null == unreadCount ? _self.unreadCount : unreadCount // ignore: cast_nullable_to_non_nullable
-as int,
+as int,messageCount: null == messageCount ? _self.messageCount : messageCount // ignore: cast_nullable_to_non_nullable
+as int,lastMessageType: null == lastMessageType ? _self.lastMessageType : lastMessageType // ignore: cast_nullable_to_non_nullable
+as MessageType,
   ));
 }
 

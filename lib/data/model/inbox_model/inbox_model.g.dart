@@ -15,6 +15,8 @@ _InboxModel _$InboxModelFromJson(Map<String, dynamic> json) => _InboxModel(
   lastSenderId: json['lastSenderId'] as String,
   lastTimestamp: DateTime.parse(json['lastTimestamp'] as String),
   unreadCount: (json['unreadCount'] as num).toInt(),
+  messageCount: (json['messageCount'] as num).toInt(),
+  lastMessageType: $enumDecode(_$MessageTypeEnumMap, json['lastMessageType']),
 );
 
 Map<String, dynamic> _$InboxModelToJson(_InboxModel instance) =>
@@ -27,4 +29,12 @@ Map<String, dynamic> _$InboxModelToJson(_InboxModel instance) =>
       'lastSenderId': instance.lastSenderId,
       'lastTimestamp': instance.lastTimestamp.toIso8601String(),
       'unreadCount': instance.unreadCount,
+      'messageCount': instance.messageCount,
+      'lastMessageType': _$MessageTypeEnumMap[instance.lastMessageType]!,
     };
+
+const _$MessageTypeEnumMap = {
+  MessageType.text: 'text',
+  MessageType.image: 'image',
+  MessageType.video: 'video',
+};

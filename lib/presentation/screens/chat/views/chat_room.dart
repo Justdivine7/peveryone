@@ -67,9 +67,9 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
         title: Text(widget.firstName.capitalize()),
         forceMaterialTransparency: true,
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Iconsax.add_square)),
+          // IconButton(onPressed: () {}, icon: Icon(Iconsax.add_square)),
           IconButton(onPressed: () {}, icon: Icon(Iconsax.video)),
-          IconButton(onPressed: () {}, icon: Icon(Iconsax.more_circle)),
+          IconButton(onPressed: () {}, icon: Icon(Iconsax.call)),
         ],
       ),
       body: Padding(

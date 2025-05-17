@@ -71,70 +71,81 @@ class HomeRepository {
         'lastTimestamp': sentAt,
         'participants': [senderId, receiverId],
         'unreadCounts.$receiverId': FieldValue.increment(1),
-        'unreadCounts.$senderId': FieldValue.increment(
-          0,
-        ), // Reset sender's own unread count
+        'unreadCounts.$senderId': 0, // Reset sender's unread count
+        'lastMessageType': type.name,
       }, SetOptions(merge: true));
     });
   }
 
-  Future<void> markMessagesAsRead(String senderId, String receiverId) async {
-    final chatId = _getChatId(senderId, receiverId);
+  Future<void> markMessagesAsRead(String userId, String otherUserId) async {
+    final chatId = _getChatId(userId, otherUserId);
     await _firestore.collection('chats').doc(chatId).update({
-      'unreadCounts.$senderId': 0,
+      'unreadCounts.$userId': 0,
     });
   }
 
- Stream<List<InboxModel>> getInbox(String userId) async* {
-  await for (final snapshot in _firestore
-      .collection('chats')
-      .where('lastMessage', isNotEqualTo: null) // Ensure lastMessage exists
-      .orderBy('lastTimestamp', descending: true)
-      .snapshots()) {
-    final List<InboxModel> list = [];
+  Stream<List<InboxModel>> getInbox(String userId) async* {
+    await for (final snapshot
+        in _firestore
+            .collection('chats')
+            .where('participants', arrayContains: userId)
+            .orderBy('lastTimestamp', descending: true)
+            .snapshots()) {
+      final List<InboxModel> list = [];
 
-    for (final doc in snapshot.docs) {
-      final data = doc.data();
-      final chatId = doc.id;
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final chatId = doc.id;
+        final otherUserId = chatId
+            .split('_')
+            .firstWhere((id) => id != userId, orElse: () => '');
+        final messageCount = (data['messageCount'] ?? 0) as int;
+        if (otherUserId.isEmpty) continue;
 
-      // Defensive parsing to avoid crashing on unexpected structure
-      try {
-        final ids = chatId.split('_');
-        final otherUserId = ids.firstWhere((id) => id != userId);
+        try {
+          final user = await fetchUserById(otherUserId);
+          final unreadCounts =
+              data['unreadCounts'] as Map<String, dynamic>? ?? {};
+          final unreadCount = unreadCounts[otherUserId] as int? ?? 0;
 
-        final user = await fetchUserById(otherUserId);
-
-        final unreadCounts = data['unreadCounts'] as Map<String, dynamic>? ?? {};
-        final unreadCount = unreadCounts[userId] ?? 0;
-
-        list.add(
-          InboxModel(
-            chatId: chatId,
-            chatWith: otherUserId,
-            chatWithName: user.firstName,
-            chatWithPhotoUrl: user.photoUrl ?? '',
-            lastMessage: data['lastMessage'] ?? '',
-            lastSenderId: data['lastSenderId'] ?? '',
-            lastTimestamp: (data['lastTimestamp'] as Timestamp).toDate(),
-            unreadCount: unreadCount,
-          ),
-        );
-      } catch (e) {
-        debugPrint('Error parsing inbox document $chatId: $e');
-        continue;
+          list.add(
+            InboxModel(
+              chatId: chatId,
+              chatWith: otherUserId,
+              chatWithName: user.firstName,
+              chatWithPhotoUrl: user.photoUrl ?? '',
+              lastMessage: data['lastMessage'] ?? '',
+              lastSenderId: data['lastSenderId'] ?? '',
+              lastTimestamp:
+                  (data['lastTimestamp'] as Timestamp?)?.toDate() ??
+                  DateTime.now(),
+              unreadCount: unreadCount,
+              messageCount: messageCount,
+              lastMessageType: MessageType.values.byName(
+                data['lastMessageType'] ?? 'text',
+              ),
+            ),
+          );
+        } catch (e) {
+          debugPrint('Error parsing inbox for chat $chatId: $e');
+          continue;
+        }
       }
+
+      yield list;
     }
-
-    yield list;
   }
-}
-
 
   Future<String> uploadFile(File file, MessageType type) async {
-    final fileName = const Uuid().v4();
-    final ref = storage.ref().child('messages/${type.name}/$fileName');
-    await ref.putFile(file);
-    return await ref.getDownloadURL();
+    try {
+      final fileName = const Uuid().v4();
+      final ref = storage.ref().child('messages/${type.name}/$fileName');
+      await ref.putFile(file);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      debugPrint('Upload failed: $e');
+      rethrow;
+    }
   }
 
   Stream<List<MessageModel>> getMessages(String senderId, String receiverId) {

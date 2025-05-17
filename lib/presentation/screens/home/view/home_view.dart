@@ -18,29 +18,37 @@ class HomeView extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(title: Text('People'), automaticallyImplyLeading: false),
-      body: usersProvider.when(
-        data:
-            (users) => GridView.builder(
+      body: SafeArea(
+        child: usersProvider.when(
+          data: (users) {
+            final filteredUsers =
+                users.where((u) => u.uid != auth?.uid).toList();
+
+            return GridView.builder(
               padding: EdgeInsets.all(12),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
 
-                crossAxisSpacing: 6,
+                crossAxisSpacing: 8,
                 mainAxisSpacing: 4,
               ),
-              itemCount: users.length,
+              itemCount: filteredUsers.length,
               itemBuilder: (context, index) {
-                final user = users[index];
+                final user = filteredUsers[index];
+
                 return Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Theme.of(context).hoverColor),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(
-                        user.photoUrl ??
-                            'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D',
-                      ),
+                      image:
+                          user.photoUrl != null
+                              ? NetworkImage(user.photoUrl ?? '')
+                              : NetworkImage(
+                                'https://images.unsplash.com/photo-1633544325196-bcf8bf81ead0?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                              ),
                     ),
                   ),
                   child: Column(
@@ -72,12 +80,11 @@ class HomeView extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: width(context, 0.01)),
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.all(6),
-                                backgroundColor: Theme.of(context).hoverColor,
+                                backgroundColor: Theme.of(context).disabledColor,
                               ),
                               onPressed: () {
                                 Navigator.pushNamed(
@@ -104,24 +111,26 @@ class HomeView extends ConsumerWidget {
                   ),
                 );
               },
-            ),
-        error: (e, StackTrace) {
-          print(e.toString());
-          return Center(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.wifi_off_rounded,
-                  size: height(context, 0.2),
-                  color: Theme.of(context).hoverColor,
-                ),
-                SizedBox(height: height(context, 0.02)),
-                Text('Error: $e'),
-              ],
-            ),
-          );
-        },
-        loading: () => Center(child: CircularProgressIndicator()),
+            );
+          },
+          error: (e, StackTrace) {
+            print(e.toString());
+            return Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.wifi_off_rounded,
+                    size: height(context, 0.2),
+                    color: Theme.of(context).hoverColor,
+                  ),
+                  SizedBox(height: height(context, 0.02)),
+                  Text('Error: Something went wrong'),
+                ],
+              ),
+            );
+          },
+          loading: () => Center(child: CircularProgressIndicator()),
+        ),
       ),
     );
   }

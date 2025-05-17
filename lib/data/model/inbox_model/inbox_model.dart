@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:peveryone/core/constants/message_enum.dart';
 
 part 'inbox_model.freezed.dart';
 part 'inbox_model.g.dart';
@@ -14,6 +15,8 @@ abstract class InboxModel with _$InboxModel {
     required String lastSenderId,
     required DateTime lastTimestamp,
     required int unreadCount,
+    required int messageCount,
+    required MessageType lastMessageType,
   }) = _InboxModel;
 
   factory InboxModel.fromJson(Map<String, dynamic> json) =>

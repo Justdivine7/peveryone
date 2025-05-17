@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:peveryone/core/constants/message_enum.dart';
+import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/data/model/message_model/message_model.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -31,7 +32,11 @@ class ChatBubble extends StatelessWidget {
                 style: TextStyle(color: isMe ? Colors.white : Colors.black),
               ),
             if (message.type == MessageType.image)
-              Image.network(message.content),
+              Image.network(
+                message.content,
+                width: width(context, 0.3),
+                height: height(context, 0.3),
+              ),
             if (message.type == MessageType.video) Icon(Icons.videocam),
             Text(
               DateFormat.Hm().format(message.sentAt),
