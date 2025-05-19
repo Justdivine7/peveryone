@@ -55,6 +55,9 @@ dependencies:
   video_compress: ^3.1.4
   mime: ^2.0.0
   intl: ^0.20.2
+  chewie: ^1.11.3
+  video_player: ^2.9.5
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

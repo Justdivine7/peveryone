@@ -10,13 +10,16 @@ import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:peveryone/data/model/message_model/message_model.dart';
 import 'package:peveryone/data/model/inbox_model/inbox_model.dart';
+import 'package:peveryone/presentation/widgets/toast_widget.dart';
+import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeRepository {
   final FirebaseFirestore _firestore;
   final FirebaseStorage storage;
+  final ToastWidget _toast;
 
-  HomeRepository(this._firestore, this.storage);
+  HomeRepository(this._firestore, this.storage, this._toast);
 
   Future<List<AppUserModel>> fetchAllUsers() async {
     final snapshot = await _firestore.collection('users').get();
@@ -128,6 +131,10 @@ class HomeRepository {
           );
         } catch (e) {
           debugPrint('Error parsing inbox for chat $chatId: $e');
+          _toast.show(
+            message: 'Something went wrong',
+            type: ToastificationType.error,
+          );
           continue;
         }
       }
@@ -144,6 +151,7 @@ class HomeRepository {
       return await ref.getDownloadURL();
     } catch (e) {
       debugPrint('Upload failed: $e');
+      _toast.show(message: 'Upload failed', type: ToastificationType.error);
       rethrow;
     }
   }
@@ -175,25 +183,56 @@ class HomeRepository {
       final file = File(result.files.single.path!);
       final mime = lookupMimeType(file.path);
       final isVideo = mime != null && mime.startsWith('video');
-      File compressedFile;
+      final compressedFile =
+          isVideo ? await compressVideo(file) : await compressImage(file);
 
-      if (isVideo) {
-        compressedFile = await compressVideo(file);
-      } else {
-        compressedFile = await compressImage(file);
-      }
-
-      final url = await uploadFile(
-        compressedFile,
-        isVideo ? MessageType.video : MessageType.image,
-      );
-
-      await sendMessage(
+      final chatId = _getChatId(senderId, receiverId);
+      final messageId = const Uuid().v4();
+      final sentAt = DateTime.now();
+      final localMessage = MessageModel(
+        id: messageId,
         senderId: senderId,
         receiverId: receiverId,
-        content: url,
+        content: '',
         type: isVideo ? MessageType.video : MessageType.image,
+        sentAt: sentAt,
+        localFilePath: compressedFile.path,
+        status: MessageStatus.sending,
+        seen: false,
       );
+
+      final messageRef = _firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages')
+          .doc(messageId);
+
+      await messageRef.set(localMessage.toJson());
+
+      try {
+        final downloadUrl = await uploadFile(
+          compressedFile,
+          isVideo ? MessageType.video : MessageType.image,
+        );
+        final updatedMessage = localMessage.copyWith(
+          content: downloadUrl,
+          status: MessageStatus.sent,
+        );
+        await messageRef.update(updatedMessage.toJson());
+
+        await _firestore.collection('chats').doc(chatId).set({
+          'lastMessage': isVideo ? '📹 video' : '🖼️ image',
+          'lastSenderId': senderId,
+          'lastTimestamp': sentAt,
+          'participants': [senderId, receiverId],
+          'unreadCounts.$receiverId': FieldValue.increment(1),
+          'unreadCounts.$senderId': 0,
+          'lastMessageType':
+              isVideo ? MessageType.video.name : MessageType.image.name,
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint('Upload failed: $e');
+      }
     }
   }
 }

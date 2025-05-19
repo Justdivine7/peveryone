@@ -6,6 +6,7 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.light,
       fontFamily: 'Outfit',
+    
       indicatorColor: AppColors.lightGrey,
       hoverColor: AppColors.darkGold,
       splashColor: AppColors.splashScreenBlack,
@@ -22,6 +23,7 @@ class AppTheme {
         surface: Colors.white,
         onSurface: Colors.black,
       ),
+      shadowColor: AppColors.chatGrey
     );
   }
 

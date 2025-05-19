@@ -6,6 +6,7 @@ import 'package:peveryone/presentation/screens/auth/views/login_view.dart';
 import 'package:peveryone/presentation/screens/auth/views/registration_view.dart';
 import 'package:peveryone/presentation/screens/base/base_view.dart';
 import 'package:peveryone/presentation/screens/chat/views/chat_room.dart';
+import 'package:peveryone/presentation/screens/chat/views/image_preview_view.dart';
 import 'package:peveryone/presentation/screens/chat/views/inbox_view.dart';
 import 'package:peveryone/presentation/screens/home/view/home_view.dart';
 import 'package:peveryone/presentation/screens/user_profile/user_profile_view.dart';
@@ -34,6 +35,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
               receiverId: args.receiverId,
               firstName: args.firstName,
             ),
+      );
+    case ImagePreviewView.routeName:
+      final args = settings.arguments as ImagePreviewView;
+      return MaterialPageRoute(
+        builder: (context) => ImagePreviewView(imageUrl: args.imageUrl),
       );
     case UserProfileView.routeName:
       return MaterialPageRoute(builder: (context) => UserProfileView());

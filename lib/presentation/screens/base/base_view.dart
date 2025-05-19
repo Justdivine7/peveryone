@@ -23,7 +23,7 @@ class _BaseView extends ConsumerState<BaseView> {
     return Scaffold(
       body: screens[pageIndex],
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Colors.transparent,
         color: Theme.of(context).disabledColor,
         animationDuration: Duration(milliseconds: 300),
         items: [

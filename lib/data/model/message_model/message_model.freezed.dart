@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MessageModel {
 
- String get id; String get senderId; String get receiverId; String get content; MessageType get type; DateTime get sentAt; bool get seen;
+ String get id; String get senderId; String get receiverId; String get content; MessageType get type; DateTime get sentAt; MessageStatus get status; String? get localFilePath; bool get seen;
 /// Create a copy of MessageModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $MessageModelCopyWith<MessageModel> get copyWith => _$MessageModelCopyWithImpl<M
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageModel&&(identical(other.id, id) || other.id == id)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.sentAt, sentAt) || other.sentAt == sentAt)&&(identical(other.seen, seen) || other.seen == seen));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MessageModel&&(identical(other.id, id) || other.id == id)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.sentAt, sentAt) || other.sentAt == sentAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.localFilePath, localFilePath) || other.localFilePath == localFilePath)&&(identical(other.seen, seen) || other.seen == seen));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,senderId,receiverId,content,type,sentAt,seen);
+int get hashCode => Object.hash(runtimeType,id,senderId,receiverId,content,type,sentAt,status,localFilePath,seen);
 
 @override
 String toString() {
-  return 'MessageModel(id: $id, senderId: $senderId, receiverId: $receiverId, content: $content, type: $type, sentAt: $sentAt, seen: $seen)';
+  return 'MessageModel(id: $id, senderId: $senderId, receiverId: $receiverId, content: $content, type: $type, sentAt: $sentAt, status: $status, localFilePath: $localFilePath, seen: $seen)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $MessageModelCopyWith<$Res>  {
   factory $MessageModelCopyWith(MessageModel value, $Res Function(MessageModel) _then) = _$MessageModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String senderId, String receiverId, String content, MessageType type, DateTime sentAt, bool seen
+ String id, String senderId, String receiverId, String content, MessageType type, DateTime sentAt, MessageStatus status, String? localFilePath, bool seen
 });
 
 
@@ -66,7 +66,7 @@ class _$MessageModelCopyWithImpl<$Res>
 
 /// Create a copy of MessageModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? senderId = null,Object? receiverId = null,Object? content = null,Object? type = null,Object? sentAt = null,Object? seen = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? senderId = null,Object? receiverId = null,Object? content = null,Object? type = null,Object? sentAt = null,Object? status = null,Object? localFilePath = freezed,Object? seen = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,senderId: null == senderId ? _self.senderId : senderId // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,9 @@ as String,receiverId: null == receiverId ? _self.receiverId : receiverId // igno
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as MessageType,sentAt: null == sentAt ? _self.sentAt : sentAt // ignore: cast_nullable_to_non_nullable
-as DateTime,seen: null == seen ? _self.seen : seen // ignore: cast_nullable_to_non_nullable
+as DateTime,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as MessageStatus,localFilePath: freezed == localFilePath ? _self.localFilePath : localFilePath // ignore: cast_nullable_to_non_nullable
+as String?,seen: null == seen ? _self.seen : seen // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -86,7 +88,7 @@ as bool,
 @JsonSerializable()
 
 class _MessageModel implements MessageModel {
-  const _MessageModel({required this.id, required this.senderId, required this.receiverId, required this.content, required this.type, required this.sentAt, required this.seen});
+  const _MessageModel({required this.id, required this.senderId, required this.receiverId, required this.content, required this.type, required this.sentAt, this.status = MessageStatus.sending, this.localFilePath, this.seen = false});
   factory _MessageModel.fromJson(Map<String, dynamic> json) => _$MessageModelFromJson(json);
 
 @override final  String id;
@@ -95,7 +97,9 @@ class _MessageModel implements MessageModel {
 @override final  String content;
 @override final  MessageType type;
 @override final  DateTime sentAt;
-@override final  bool seen;
+@override@JsonKey() final  MessageStatus status;
+@override final  String? localFilePath;
+@override@JsonKey() final  bool seen;
 
 /// Create a copy of MessageModel
 /// with the given fields replaced by the non-null parameter values.
@@ -110,16 +114,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageModel&&(identical(other.id, id) || other.id == id)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.sentAt, sentAt) || other.sentAt == sentAt)&&(identical(other.seen, seen) || other.seen == seen));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MessageModel&&(identical(other.id, id) || other.id == id)&&(identical(other.senderId, senderId) || other.senderId == senderId)&&(identical(other.receiverId, receiverId) || other.receiverId == receiverId)&&(identical(other.content, content) || other.content == content)&&(identical(other.type, type) || other.type == type)&&(identical(other.sentAt, sentAt) || other.sentAt == sentAt)&&(identical(other.status, status) || other.status == status)&&(identical(other.localFilePath, localFilePath) || other.localFilePath == localFilePath)&&(identical(other.seen, seen) || other.seen == seen));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,senderId,receiverId,content,type,sentAt,seen);
+int get hashCode => Object.hash(runtimeType,id,senderId,receiverId,content,type,sentAt,status,localFilePath,seen);
 
 @override
 String toString() {
-  return 'MessageModel(id: $id, senderId: $senderId, receiverId: $receiverId, content: $content, type: $type, sentAt: $sentAt, seen: $seen)';
+  return 'MessageModel(id: $id, senderId: $senderId, receiverId: $receiverId, content: $content, type: $type, sentAt: $sentAt, status: $status, localFilePath: $localFilePath, seen: $seen)';
 }
 
 
@@ -130,7 +134,7 @@ abstract mixin class _$MessageModelCopyWith<$Res> implements $MessageModelCopyWi
   factory _$MessageModelCopyWith(_MessageModel value, $Res Function(_MessageModel) _then) = __$MessageModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String senderId, String receiverId, String content, MessageType type, DateTime sentAt, bool seen
+ String id, String senderId, String receiverId, String content, MessageType type, DateTime sentAt, MessageStatus status, String? localFilePath, bool seen
 });
 
 
@@ -147,7 +151,7 @@ class __$MessageModelCopyWithImpl<$Res>
 
 /// Create a copy of MessageModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? senderId = null,Object? receiverId = null,Object? content = null,Object? type = null,Object? sentAt = null,Object? seen = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? senderId = null,Object? receiverId = null,Object? content = null,Object? type = null,Object? sentAt = null,Object? status = null,Object? localFilePath = freezed,Object? seen = null,}) {
   return _then(_MessageModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,senderId: null == senderId ? _self.senderId : senderId // ignore: cast_nullable_to_non_nullable
@@ -155,7 +159,9 @@ as String,receiverId: null == receiverId ? _self.receiverId : receiverId // igno
 as String,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as MessageType,sentAt: null == sentAt ? _self.sentAt : sentAt // ignore: cast_nullable_to_non_nullable
-as DateTime,seen: null == seen ? _self.seen : seen // ignore: cast_nullable_to_non_nullable
+as DateTime,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as MessageStatus,localFilePath: freezed == localFilePath ? _self.localFilePath : localFilePath // ignore: cast_nullable_to_non_nullable
+as String?,seen: null == seen ? _self.seen : seen // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
