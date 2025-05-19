@@ -2,15 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
- import 'package:peveryone/core/helpers/ui_helpers.dart';
+import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/providers/general_providers/inbox_search_provider.dart';
 import 'package:peveryone/presentation/providers/inbox_provider.dart';
- import 'package:peveryone/presentation/widgets/app_alert_dialog.dart';
+import 'package:peveryone/presentation/widgets/app_alert_dialog.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 import 'package:peveryone/presentation/widgets/error_screen.dart';
 import 'package:peveryone/presentation/widgets/inbox_tile.dart';
- 
+
 class InboxView extends ConsumerStatefulWidget {
   static const routeName = '/inbox-screen';
 
@@ -39,11 +39,6 @@ class _InboxViewState extends ConsumerState<InboxView> {
     super.dispose();
   }
 
-  void logout() async {
-    final auth = ref.read(authRepositoryProvider);
-    await auth.signOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     final inboxAsync = ref.watch(inboxProvider(auth.currentUser!.uid));
@@ -54,26 +49,10 @@ class _InboxViewState extends ConsumerState<InboxView> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         title: const Text('Inbox'),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Iconsax.add_square)),
-          IconButton(onPressed: () {}, icon: const Icon(Iconsax.more_circle)),
-          IconButton(
-            onPressed: () {
-              appAlertDialog(
-                context: context,
-                title: 'Sign out',
-                content: 'Are you sure you want to sign out',
-                confirmText: 'Yes',
-                cancelText: 'Cancel',
-                onConfirm: () async {
-                  final auth = ref.read(authRepositoryProvider);
-                  await auth.signOut();
-                },
-              );
-            },
-            icon: const Icon(Iconsax.logout),
-          ),
-        ],
+        // actions: [
+        //   IconButton(onPressed: () {}, icon: const Icon(Iconsax.add_square)),
+        //   IconButton(onPressed: () {}, icon: const Icon(Iconsax.more_circle)),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -164,14 +143,13 @@ class _InboxViewState extends ConsumerState<InboxView> {
                       //   ),
                       // ),
                       // SizedBox(height: height(context, 0.01)),
-
                       const Text(
                         'All Chats',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      ...allList
-                          .map((inbox) => InboxTile(inbox: inbox, auth: auth))
-                          ,
+                      ...allList.map(
+                        (inbox) => InboxTile(inbox: inbox, auth: auth),
+                      ),
                     ],
                   );
                 },

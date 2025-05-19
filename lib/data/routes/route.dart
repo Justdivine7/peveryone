@@ -9,7 +9,8 @@ import 'package:peveryone/presentation/screens/chat/views/chat_room.dart';
 import 'package:peveryone/presentation/screens/chat/views/image_preview_view.dart';
 import 'package:peveryone/presentation/screens/chat/views/inbox_view.dart';
 import 'package:peveryone/presentation/screens/home/view/home_view.dart';
-import 'package:peveryone/presentation/screens/user_profile/user_profile_view.dart';
+import 'package:peveryone/presentation/screens/user_profile/views/edit_profile_view.dart';
+import 'package:peveryone/presentation/screens/user_profile/views/user_profile_view.dart';
 import 'package:peveryone/presentation/widgets/error_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -43,6 +44,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       );
     case UserProfileView.routeName:
       return MaterialPageRoute(builder: (context) => UserProfileView());
+    case EditProfileView.routeName:
+      return MaterialPageRoute(builder: (context) => EditProfileView());
     case HomeView.routeName:
       return MaterialPageRoute(builder: (context) => HomeView());
     case BaseView.routeName:

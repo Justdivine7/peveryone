@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
 import 'package:peveryone/presentation/screens/chat/views/inbox_view.dart';
 import 'package:peveryone/presentation/screens/home/view/home_view.dart';
-import 'package:peveryone/presentation/screens/user_profile/user_profile_view.dart';
+import 'package:peveryone/presentation/screens/user_profile/views/user_profile_view.dart';
 
 class BaseView extends ConsumerStatefulWidget {
   static const routeName = '/base-view';

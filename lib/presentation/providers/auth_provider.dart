@@ -21,7 +21,7 @@ final authStateChangesProvider = StreamProvider<User?>((ref) {
 });
 
 final appUserProvider = FutureProvider<AppUserModel?>((ref) async {
-  final user = await ref.watch(authStateChangesProvider.future);
+  final user = await ref.read(authStateChangesProvider.future);
   if (user == null) return null;
 
   final doc =

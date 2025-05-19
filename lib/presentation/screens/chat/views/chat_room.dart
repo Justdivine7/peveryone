@@ -69,7 +69,10 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
     final messagesList = ref.watch(messagesStreamProvider(chatKey));
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.firstName.capitalize()),
+        title: GestureDetector(
+          onTap: () {},
+          child: Text(widget.firstName.capitalize()),
+        ),
         forceMaterialTransparency: true,
         actions: [
           // IconButton(onPressed: () {}, icon: Icon(Iconsax.add_square)),
