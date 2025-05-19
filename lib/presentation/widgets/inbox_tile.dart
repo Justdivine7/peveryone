@@ -23,6 +23,7 @@ class InboxTile extends StatelessWidget {
             firstName: inbox.chatWithName,
           ),
         );
+        
       },
       leading: CircleAvatar(
         radius: 24,

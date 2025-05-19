@@ -55,6 +55,7 @@ class HomeRepository {
       content: content,
       type: type,
       sentAt: sentAt,
+      status: MessageStatus.sending,
       seen: false,
     );
 
@@ -78,13 +79,38 @@ class HomeRepository {
         'lastMessageType': type.name,
       }, SetOptions(merge: true));
     });
+      await messageRef.update({'status': MessageStatus.sent.name});
+
   }
 
-  Future<void> markMessagesAsRead(String userId, String otherUserId) async {
-    final chatId = _getChatId(userId, otherUserId);
-    await _firestore.collection('chats').doc(chatId).update({
-      'unreadCounts.$userId': 0,
-    });
+  Future<void> markMessagesAsDelivered(
+    String receiverId,
+    String senderId,
+  ) async {
+    try {
+      final chatId = _getChatId(senderId, receiverId);
+      final messagesRef = _firestore
+          .collection('chats')
+          .doc(chatId)
+          .collection('messages');
+      final querySnapshot =
+          await messagesRef
+              .where('receiverId', isEqualTo: receiverId)
+              .where('status', isEqualTo: MessageStatus.sent.name)
+              .get();
+      final batch = _firestore.batch();
+
+      for (var doc in querySnapshot.docs) {
+        batch.update(doc.reference, {'status': MessageStatus.delivered.name});
+      }
+      await batch.commit();
+    } catch (e) {
+      debugPrint('error occured: $e');
+      _toast.show(
+        message: 'An update error occured',
+        type: ToastificationType.info,
+      );
+    }
   }
 
   Stream<List<InboxModel>> getInbox(String userId) async* {
@@ -146,7 +172,7 @@ class HomeRepository {
   Future<String> uploadFile(File file, MessageType type) async {
     try {
       final fileName = const Uuid().v4();
-      final ref = storage.ref().child('messages/${type.name}/$fileName');
+      final ref = storage.ref().child('messages/${type.name}s/$fileName');
       await ref.putFile(file);
       return await ref.getDownloadURL();
     } catch (e) {

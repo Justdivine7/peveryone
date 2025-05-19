@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:peveryone/core/constants/extensions.dart';
 import 'package:peveryone/core/helpers/chat_helpers.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
+import 'package:peveryone/data/model/message_model/message_model.dart';
 import 'package:peveryone/presentation/providers/home_view_provider.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 import 'package:peveryone/presentation/widgets/chat_bubble.dart';
@@ -51,10 +52,14 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     _chatController.dispose();
+    super.dispose();
   }
 
   @override
@@ -79,6 +84,21 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
             Expanded(
               child: messagesList.when(
                 data: (messages) {
+                  final sentMessages = messages.where(
+                    (msg) =>
+                        msg.receiverId ==
+                            widget.receiverId && // current user is the receiver
+                        msg.status == MessageStatus.sent,
+                  );
+
+                  if (sentMessages.isNotEmpty) {
+                    ref
+                        .read(homeViewProvider)
+                        .markMessagesAsDelivered(
+                          widget.senderId, // current user
+                          widget.receiverId, // the one who sent the message
+                        );
+                  }
                   WidgetsBinding.instance.addPostFrameCallback(
                     (_) => _scrollToBottom(),
                   );

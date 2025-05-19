@@ -58,6 +58,7 @@ dependencies:
   chewie: ^1.11.3
   video_player: ^2.9.5
   cached_network_image: ^3.4.1
+  video_thumbnail: ^0.5.6
 
 dev_dependencies:
   flutter_test:
