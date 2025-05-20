@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/constants/message_enum.dart';
-import 'package:peveryone/presentation/providers/home_view_provider.dart';
+import 'package:peveryone/presentation/providers/inbox_provider.dart';
 
 void sendText(String text, String senderId, String receiverId, WidgetRef ref) {
   ref
-      .read(homeViewProvider)
+      .read(inboxChatRepositoryProvider)
       .sendMessage(
         senderId: senderId,
         receiverId: receiverId,
@@ -22,9 +22,11 @@ Future<void> sendMedia(
   String receiverId,
   WidgetRef ref,
 ) async {
-  final url = await ref.read(homeViewProvider).uploadFile(file, type);
+  final url = await ref
+      .read(inboxChatRepositoryProvider)
+      .uploadFile(file, type);
   await ref
-      .read(homeViewProvider)
+      .read(inboxChatRepositoryProvider)
       .sendMessage(
         senderId: senderId,
         receiverId: receiverId,

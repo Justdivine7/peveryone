@@ -5,7 +5,7 @@ import 'package:peveryone/core/constants/extensions.dart';
 import 'package:peveryone/core/helpers/chat_helpers.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/data/model/message_model/message_model.dart';
-import 'package:peveryone/presentation/providers/home_view_provider.dart';
+ import 'package:peveryone/presentation/providers/inbox_provider.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 import 'package:peveryone/presentation/widgets/chat_bubble.dart';
 import 'package:peveryone/presentation/widgets/error_screen.dart';
@@ -47,7 +47,7 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
 
   void _handleMediaPick() async {
     await ref
-        .read(homeViewProvider)
+        .read(inboxChatRepositoryProvider)
         .pickMediaAndSend(context, ref, widget.senderId, widget.receiverId);
   }
 
@@ -96,7 +96,7 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
 
                   if (sentMessages.isNotEmpty) {
                     ref
-                        .read(homeViewProvider)
+                        .read(inboxChatRepositoryProvider)
                         .markMessagesAsDelivered(
                           widget.senderId, // current user
                           widget.receiverId, // the one who sent the message
