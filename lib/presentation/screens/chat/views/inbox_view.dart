@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
-import 'package:peveryone/presentation/providers/general_providers/inbox_search_provider.dart';
+import 'package:peveryone/presentation/providers/general_providers/global_providers.dart';
 import 'package:peveryone/presentation/providers/inbox_provider.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 import 'package:peveryone/presentation/widgets/error_screen.dart';
@@ -46,10 +46,6 @@ class _InboxViewState extends ConsumerState<InboxView> {
       appBar: AppBar(
         forceMaterialTransparency: true,
         title: const Text('Inbox'),
-        // actions: [
-        //   IconButton(onPressed: () {}, icon: const Icon(Iconsax.add_square)),
-        //   IconButton(onPressed: () {}, icon: const Icon(Iconsax.more_circle)),
-        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -151,7 +147,7 @@ class _InboxViewState extends ConsumerState<InboxView> {
                   );
                 },
                 error: (e, _) {
-                  print('Inbox view error: $e');
+                  debugPrint('Inbox view error: $e');
                   return ErrorScreen(error: e.toString());
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),

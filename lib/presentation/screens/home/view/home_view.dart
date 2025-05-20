@@ -113,8 +113,8 @@ class HomeView extends ConsumerWidget {
               },
             );
           },
-          error: (e, StackTrace) {
-            print(e.toString());
+          error: (e, stackTrace) {
+            debugPrint(e.toString());
             return Center(
               child: Column(
                 children: [

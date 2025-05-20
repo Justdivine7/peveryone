@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
-import 'package:peveryone/presentation/providers/general_providers/toast_provider.dart';
-import 'package:peveryone/presentation/widgets/app_big_button.dart';
+import 'package:peveryone/presentation/providers/general_providers/global_providers.dart';
+ import 'package:peveryone/presentation/widgets/app_big_button.dart';
 import 'package:peveryone/presentation/widgets/app_text_button.dart';
 import 'package:peveryone/presentation/widgets/loading_overlay.dart';
 import 'package:toastification/toastification.dart';
@@ -54,7 +54,7 @@ class _EmailVerificationViewState extends ConsumerState<EmailVerificationView> {
         message: 'Email already verified',
         type: ToastificationType.success,
       );
-      print('verified');
+      debugPrint('verified');
     }
   }
 

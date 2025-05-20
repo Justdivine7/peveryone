@@ -27,33 +27,46 @@ class UserProfileView extends ConsumerWidget {
             width: double.infinity,
             color: Theme.of(context).focusColor,
             padding: const EdgeInsets.symmetric(vertical: 30),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2.5),
+            child: appUser.when(
+              data: (user) {
+                return Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2.5),
+                      ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        radius: 50,
+                        backgroundImage:
+                            (user!.photoUrl != null &&
+                                    user.photoUrl!.isNotEmpty)
+                                ? NetworkImage(user.photoUrl!) as ImageProvider
+                                : const AssetImage('assets/images/dummy.png'),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      user.firstName.capitalize(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      user.email.capitalize(),
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                );
+              },
+              error:
+                  (e, stackTrace) => Column(
+                    children: [Center(child: Text('Something went wrong'))],
                   ),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 50,
-                   backgroundImage: NetworkImage('https://images.unsplash.com/photo-1633544325196-bcf8bf81ead0?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  appUser.value!.firstName.capitalize(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  appUser.value!.email.capitalize(),
-                  style: TextStyle(color: Colors.white70),
-                ),
-              ],
+              loading: () => Center(child: CircularProgressIndicator()),
             ),
           ),
 
@@ -67,12 +80,9 @@ class UserProfileView extends ConsumerWidget {
                   icon: Icons.person,
                   title: 'Edit Profile',
                   context: context,
-                ),
-
-                _buildListTile(
-                  icon: Icons.notifications,
-                  title: 'Notifications',
-                  context: context,
+                  onTap: () {
+                    Navigator.pushNamed(context, '/edit-profile');
+                  },
                 ),
 
                 _buildListTile(
