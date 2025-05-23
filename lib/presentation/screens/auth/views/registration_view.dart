@@ -42,40 +42,17 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
     });
   }
 
-  String? validateFirstName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Field is required';
+  void googleSignIn() async {
+    final loading = ref.read(AuthLoader.registrationLoadingProvider.notifier);
+    loading.state = true;
+    final auth = ref.read(authRepositoryProvider);
+    final userCredential = await auth.signInWithGoogle();
+    loading.state = false;
+    if (userCredential?.user != null && context.mounted) {
+      Navigator.pushReplacementNamed(context, '/base-view');
+    } else {
+      return null;
     }
-
-    return null;
-  }
-
-  String? validateLastName(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Field is required';
-    }
-
-    return null;
-  }
-
-  String? validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Field is required';
-    }
-
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Field is required';
-    }
-
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-
-    return null;
   }
 
   void register() async {
@@ -95,8 +72,9 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
       if (user != null && context.mounted) {
         await auth.sendEmailVerification(user);
         Navigator.pushReplacementNamed(context, '/verify-email');
-      } else {
-        loading.state = false;
+      }else{
+        loading.state= false;
+        return;
       }
     }
   }
@@ -137,7 +115,11 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     ),
                     SizedBox(height: height(context, 0.01)),
                     AppTextFormField(
-                      validator: validateFirstName,
+                      validator:
+                          (value) => validateField(
+                            value: value,
+                            fieldName: 'First name',
+                          ),
                       obscure: false,
                       hintText: 'First name',
                       textController: _firstNameController,
@@ -151,7 +133,11 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     ),
                     SizedBox(height: height(context, 0.01)),
                     AppTextFormField(
-                      validator: validateLastName,
+                      validator:
+                          (value) => validateField(
+                            value: value,
+                            fieldName: 'Last name',
+                          ),
                       obscure: false,
                       hintText: 'Last name',
                       textController: _lastNameController,
@@ -167,7 +153,9 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     ),
                     SizedBox(height: height(context, 0.01)),
                     AppTextFormField(
-                      validator: validateEmail,
+                      validator:
+                          (value) =>
+                              validateField(value: value, fieldName: 'Email'),
                       obscure: false,
                       hintText: 'Email address',
                       textController: _emailController,
@@ -183,7 +171,11 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     ),
                     SizedBox(height: height(context, 0.01)),
                     AppTextFormField(
-                      validator: validatePassword,
+                      validator:
+                          (value) => validatePassword(
+                            value: value,
+                            fieldName: 'Password',
+                          ),
                       obscure: showPassword,
                       textController: _passwordController,
                       hintText: 'Password',
@@ -200,34 +192,41 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     SizedBox(height: height(context, 0.02)),
                     AppBigButton(label: 'Sign up', onPressed: register),
                     SizedBox(height: height(context, 0.03)),
+
+                    Center(
+                      child: AuthLogos(
+                        onTap: googleSignIn,
+
+                        label: 'Sign up with',
+                        image: 'assets/images/google.png',
+                      ),
+                    ),
+                    SizedBox(height: height(context, 0.03)),
                     Center(
                       child: AppTextButton(
                         onTap: () {
                           Navigator.pushNamed(context, LoginView.routeName);
                         },
-                        label: "Already have an account? Sign In",
+                        richLabel: TextSpan(
+                          text: "Don't have an account?",
+                          style: TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: "  Sign up",
+                              style: TextStyle(
+                                color: Theme.of(context).hoverColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                         textColor: Theme.of(context).dividerColor,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(height: height(context, 0.02)),
-                    Center(
-                      child: Text(
-                        'Or Sign up with',
-                        style: TextStyle(color: Theme.of(context).dividerColor),
-                      ),
-                    ),
-                    SizedBox(height: height(context, 0.02)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AuthLogos(image: 'assets/images/google.png'),
-                        AuthLogos(image: 'assets/images/apple.png'),
-                        AuthLogos(image: 'assets/images/facebook.png'),
-                      ],
-                    ),
                     SizedBox(height: height(context, 0.03)),
+
                     Center(
                       child: Text(
                         textAlign: TextAlign.center,

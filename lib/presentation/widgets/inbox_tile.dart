@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:peveryone/core/constants/extensions.dart';
@@ -12,6 +13,10 @@ class InboxTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+      'InboxTile - Chat: ${inbox.chatWithName}, UnreadCount: ${inbox.unreadCount}',
+    );
+
     return ListTile(
       onTap: () {
         Navigator.pushNamed(
@@ -23,7 +28,6 @@ class InboxTile extends StatelessWidget {
             firstName: inbox.chatWithName,
           ),
         );
-        
       },
       leading: CircleAvatar(
         radius: 24,
@@ -31,7 +35,8 @@ class InboxTile extends StatelessWidget {
         backgroundImage:
             (inbox.chatWithPhotoUrl != null &&
                     inbox.chatWithPhotoUrl!.isNotEmpty)
-                ? NetworkImage(inbox.chatWithPhotoUrl!) as ImageProvider
+                ? CachedNetworkImageProvider(inbox.chatWithPhotoUrl!)
+                    as ImageProvider
                 : const AssetImage('assets/images/dummy.png'),
       ),
       title: Text(inbox.chatWithName.capitalize()),

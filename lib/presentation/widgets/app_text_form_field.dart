@@ -47,6 +47,12 @@ class AppTextFormField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Theme.of(context).focusColor),
         ),
+        errorBorder: OutlineInputBorder(
+          borderSide: BorderSide.none, // removes red border
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderSide: BorderSide.none, // removes red border when focused
+        ),
       ),
     );
   }

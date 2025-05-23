@@ -12,7 +12,7 @@ final homeViewProvider = Provider<HomeRepository>((ref) {
   );
 });
 
-final allUsersProvider = FutureProvider<List<AppUserModel>>((ref) async {
+final allUsersProvider = StreamProvider<List<AppUserModel>>((ref)  {
   final repository = ref.watch(homeViewProvider);
   return repository.fetchAllUsers();
 });

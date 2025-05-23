@@ -37,26 +37,6 @@ class _LoginViewState extends ConsumerState<LoginView> {
     });
   }
 
-  String? validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Email is required';
-    }
-
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Password is required';
-    }
-
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-
-    return null;
-  }
-
   void login() async {
     if (_formKey.currentState!.validate()) {
       FocusScope.of(context).unfocus();
@@ -77,12 +57,29 @@ class _LoginViewState extends ConsumerState<LoginView> {
           Navigator.pushReplacementNamed(context, '/verify-email');
         } else {
           // If the user has verified their email, navigate to the main view
-          Navigator.pushReplacementNamed(context, '/base-view');
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/base-view',
+            (route) => false,
+          );
         }
       } else {
-        // If the user is null, stop loading or handle this case appropriately
         loading.state = false;
+        return;
       }
+    }
+  }
+
+  void googleSignIn() async {
+    final loading = ref.read(AuthLoader.registrationLoadingProvider.notifier);
+    loading.state = true;
+    final auth = ref.read(authRepositoryProvider);
+    final userCredential = await auth.signInWithGoogle();
+    loading.state = false;
+    if (userCredential?.user != null && context.mounted) {
+      Navigator.pushReplacementNamed(context, '/base-view');
+    } else {
+      return null;
     }
   }
 
@@ -100,6 +97,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: height(context, 0.03)),
@@ -127,7 +125,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     SizedBox(height: height(context, 0.01)),
 
                     AppTextFormField(
-                      validator: validateEmail,
+                      validator:
+                          (value) =>
+                              validateField(value: value, fieldName: 'Email'),
                       obscure: false,
                       hintText: 'Enter your email address',
                       textController: _emailController,
@@ -144,7 +144,11 @@ class _LoginViewState extends ConsumerState<LoginView> {
                     SizedBox(height: height(context, 0.01)),
 
                     AppTextFormField(
-                      validator: validatePassword,
+                      validator:
+                          (value) => validatePassword(
+                            value: value,
+                            fieldName: 'Password',
+                          ),
                       obscure: showPassword,
                       textController: _passwordController,
                       hintText: 'Enter your password',
@@ -166,9 +170,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
                       label: 'Forgot Password?',
                       textColor: Colors.black,
                     ),
-                    SizedBox(height: height(context, 0.02)),
+                    SizedBox(height: height(context, 0.03)),
                     AppBigButton(label: 'Login', onPressed: login),
                     SizedBox(height: height(context, 0.03)),
+
+                    AuthLogos(
+                      onTap: googleSignIn,
+                      label: 'Sign up with',
+                      image: 'assets/images/google.png',
+                    ),
+                    SizedBox(height: height(context, 0.02)),
 
                     Center(
                       child: AppTextButton(
@@ -178,37 +189,22 @@ class _LoginViewState extends ConsumerState<LoginView> {
                             RegistrationView.routeName,
                           );
                         },
-                        label: "Don't have an account? Sign Up",
+                        richLabel: TextSpan(
+                          text: "Don't have an account?",
+                          style: TextStyle(color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: "  Sign up",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).hoverColor,
+                              ),
+                            ),
+                          ],
+                        ),
                         textColor: Theme.of(context).dividerColor,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: height(context, 0.03)),
-                    Center(
-                      child: Text(
-                        'Or Sign in with',
-                        style: TextStyle(color: Theme.of(context).dividerColor),
-                      ),
-                    ),
-                    SizedBox(height: height(context, 0.02)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AuthLogos(image: 'assets/images/google.png'),
-                        AuthLogos(image: 'assets/images/apple.png'),
-                        AuthLogos(image: 'assets/images/facebook.png'),
-                      ],
-                    ),
-                    SizedBox(height: height(context, 0.1)),
-                    Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        'By signing up you agree to our Terms and \nConditions of Use',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).dividerColor,
-                        ),
                       ),
                     ),
                   ],

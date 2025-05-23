@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 import 'package:peveryone/core/constants/extensions.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/home_view_provider.dart';
@@ -44,16 +46,14 @@ class HomeView extends ConsumerWidget {
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       image:
-                          user.photoUrl != null
-                              ? NetworkImage(user.photoUrl ?? '')
-                              : NetworkImage(
-                                'https://images.unsplash.com/photo-1633544325196-bcf8bf81ead0?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                              ),
+                          (user.photoUrl != null && user.photoUrl!.isNotEmpty)
+                              ? CachedNetworkImageProvider(user.photoUrl!)
+                              : const AssetImage('assets/images/dummy.png'),
                     ),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         user.firstName.capitalize(),
@@ -84,7 +84,8 @@ class HomeView extends ConsumerWidget {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.all(6),
-                                backgroundColor: Theme.of(context).disabledColor,
+                                backgroundColor:
+                                    Theme.of(context).disabledColor,
                               ),
                               onPressed: () {
                                 Navigator.pushNamed(
@@ -129,7 +130,17 @@ class HomeView extends ConsumerWidget {
               ),
             );
           },
-          loading: () => Center(child: CircularProgressIndicator()),
+          loading:
+              () => Center(
+                child: Container(
+                  decoration: BoxDecoration(shape: BoxShape.circle),
+                  child: Lottie.asset(
+                    'assets/animations/loading.json',
+                    width: 150,
+                    height: 150,
+                  ),
+                ),
+              ),
         ),
       ),
     );

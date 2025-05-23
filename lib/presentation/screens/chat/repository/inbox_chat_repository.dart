@@ -15,17 +15,18 @@ import 'package:peveryone/presentation/widgets/toast_widget.dart';
 import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
 
-class InboxChatRepository{
+class InboxChatRepository {
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
   final ToastWidget _toast;
 
   InboxChatRepository(this._firestore, this._storage, this._toast);
 
-   Future<AppUserModel> fetchUserById(String userId) async {
+  Future<AppUserModel> fetchUserById(String userId) async {
     final doc = await _firestore.collection('users').doc(userId).get();
     return AppUserModel.fromJson(doc.data()!);
   }
+
   String _getChatId(String user1, String user2) {
     final ids = [user1, user2]..sort();
     return '${ids[0]}_${ids[1]}';
@@ -72,8 +73,7 @@ class InboxChatRepository{
         'lastMessageType': type.name,
       }, SetOptions(merge: true));
     });
-      await messageRef.update({'status': MessageStatus.sent.name});
-
+    await messageRef.update({'status': MessageStatus.sent.name});
   }
 
   Future<void> markMessagesAsDelivered(
@@ -107,6 +107,8 @@ class InboxChatRepository{
   }
 
   Stream<List<InboxModel>> getInbox(String userId) async* {
+    debugPrint('getInbox called for userId: $userId'); // Add this
+
     await for (final snapshot
         in _firestore
             .collection('chats')
@@ -118,9 +120,13 @@ class InboxChatRepository{
       for (final doc in snapshot.docs) {
         final data = doc.data();
         final chatId = doc.id;
+        debugPrint('Processing chat: $chatId'); // Add this
+        debugPrint('Full chat data: $data');
         final otherUserId = chatId
             .split('_')
             .firstWhere((id) => id != userId, orElse: () => '');
+        debugPrint('Other user ID: $otherUserId'); // Add this
+
         final messageCount = (data['messageCount'] ?? 0) as int;
         if (otherUserId.isEmpty) continue;
 
@@ -128,7 +134,12 @@ class InboxChatRepository{
           final user = await fetchUserById(otherUserId);
           final unreadCounts =
               data['unreadCounts'] as Map<String, dynamic>? ?? {};
-          final unreadCount = unreadCounts[otherUserId] as int? ?? 0;
+          debugPrint(
+            'Raw unreadCounts from Firestore: $unreadCounts',
+          ); // Add this
+          debugPrint('Looking for unread count with key: $userId');
+          final unreadCount = data['unreadCounts.$userId'] as int? ?? 0;
+          debugPrint('Final unreadCount for $userId: $unreadCount'); // Add this
 
           list.add(
             InboxModel(

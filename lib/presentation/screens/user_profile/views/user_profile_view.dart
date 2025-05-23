@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:peveryone/core/constants/extensions.dart';
 import 'package:peveryone/presentation/providers/auth_provider.dart';
 import 'package:peveryone/presentation/widgets/app_alert_dialog.dart';
@@ -29,6 +31,9 @@ class UserProfileView extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 30),
             child: appUser.when(
               data: (user) {
+                if (user == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
                 return Column(
                   children: [
                     Container(
@@ -40,9 +45,10 @@ class UserProfileView extends ConsumerWidget {
                         backgroundColor: Colors.white,
                         radius: 50,
                         backgroundImage:
-                            (user!.photoUrl != null &&
+                            (user.photoUrl != null &&
                                     user.photoUrl!.isNotEmpty)
-                                ? NetworkImage(user.photoUrl!) as ImageProvider
+                                ? CachedNetworkImageProvider(user.photoUrl!)
+                                    as ImageProvider
                                 : const AssetImage('assets/images/dummy.png'),
                       ),
                     ),
@@ -56,7 +62,7 @@ class UserProfileView extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      user.email.capitalize(),
+                      user.email.capitalize() ,
                       style: TextStyle(color: Colors.white70),
                     ),
                   ],
@@ -66,7 +72,17 @@ class UserProfileView extends ConsumerWidget {
                   (e, stackTrace) => Column(
                     children: [Center(child: Text('Something went wrong'))],
                   ),
-              loading: () => Center(child: CircularProgressIndicator()),
+              loading:
+                  () => Center(
+                    child: Container(
+                      decoration: BoxDecoration(shape: BoxShape.circle),
+                      child: Lottie.asset(
+                        'assets/animations/loading.json',
+                        width: 150,
+                        height: 150,
+                      ),
+                    ),
+                  ),
             ),
           ),
 
@@ -98,11 +114,7 @@ class UserProfileView extends ConsumerWidget {
                       cancelText: 'Cancel',
                       onConfirm: () async {
                         final auth = ref.read(authRepositoryProvider);
-                        await auth.signOut();
-                        Navigator.pushReplacementNamed(
-                          context,
-                          '/login-screen',
-                        );
+                        await auth.signOut(ref);
                       },
                     );
                   },

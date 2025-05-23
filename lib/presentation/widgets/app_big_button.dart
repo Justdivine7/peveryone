@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 class AppBigButton extends StatelessWidget {
   final void Function()? onPressed;
   final String label;
-  const AppBigButton({super.key, this.onPressed, required this.label});
+
+  const AppBigButton({
+    super.key,
+    this.onPressed,
+    required this.label,
+
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +32,11 @@ class AppBigButton extends StatelessWidget {
         child: Text(
           textAlign: TextAlign.center,
           label,
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 16),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 16,
+          ),
         ),
       ),
     );

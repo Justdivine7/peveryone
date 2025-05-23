@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
 import 'package:peveryone/presentation/providers/general_providers/global_providers.dart';
- import 'package:peveryone/presentation/screens/auth/repository/auth_repository.dart';
+import 'package:peveryone/presentation/screens/auth/repository/auth_repository.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
@@ -20,15 +20,28 @@ final authStateChangesProvider = StreamProvider<User?>((ref) {
   return repo.authStateChanges;
 });
 
-final appUserProvider = FutureProvider<AppUserModel?>((ref) async {
-  final user = await ref.read(authStateChangesProvider.future);
-  if (user == null) return null;
+final appUserProvider = StreamProvider<AppUserModel?>((ref) {
+  final authChanges = ref.watch(authStateChangesProvider);
 
-  final doc =
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-  if (doc.exists) {
-    return AppUserModel.fromJson(doc.data()!);
-  } else {
-    return null;
-  }
+  return authChanges.when(
+    data: (user) {
+      if (user == null) return Stream.value(null);
+
+      final docStream =
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .snapshots();
+
+      return docStream.map((doc) {
+        if (doc.exists) {
+          return AppUserModel.fromJson(doc.data()!);
+        } else {
+          return null;
+        }
+      });
+    },
+    loading: () => const Stream.empty(),
+    error: (_, __) => const Stream.empty(),
+  );
 });

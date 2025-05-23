@@ -3,8 +3,13 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
+import 'package:peveryone/main.dart';
+import 'package:peveryone/presentation/providers/auth_provider.dart';
+import 'package:peveryone/presentation/providers/general_providers/auth_loader.dart';
+import 'package:peveryone/presentation/providers/general_providers/global_providers.dart';
 import 'package:peveryone/presentation/widgets/toast_widget.dart';
 import 'package:toastification/toastification.dart';
 
@@ -15,8 +20,38 @@ class AuthRepository {
   final ToastWidget _toast;
   AuthRepository(this._auth, this._firestore, this._googleSignIn, this._toast);
 
-  // User? get userDetails => _auth.currentUser;
+  User? get userDetails => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  Future<UserCredential?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) return null;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
+      _toast.show(
+        message: 'Google sign in successful',
+        type: ToastificationType.success,
+      );
+      return userCredential;
+    } catch (e) {
+      debugPrint('Google sign-in failed: $e');
+      _toast.show(
+        message: 'Google sign in failed',
+        type: ToastificationType.error,
+      );
+    }
+    return null;
+  }
+
   Future<User?> signUp({
     required String email,
     required String password,
@@ -57,26 +92,27 @@ class AuthRepository {
         );
         return null; // Explicitly return null if user is null
       }
-    } catch (e) {
-      String errorMessage = 'Registration failed';
-
-      if (e is FirebaseAuthException) {
-        switch (e.code) {
-          case 'email-already-in-use':
-            errorMessage = 'The email address is already in use.';
-            break;
-          case 'weak-password':
-            errorMessage = 'The password is too weak.';
-            break;
-          case 'invalid-email':
-            errorMessage = 'The email address is not valid.';
-            break;
-          default:
-            errorMessage = 'Registration failed. Please try again.';
-        }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'network-request-failed') {
+        _toast.show(
+          message: 'No internet connection',
+          type: ToastificationType.error,
+        );
+      } else if (e.code == 'email-already-in-use') {
+        _toast.show(
+          message: 'This email is already in use. Try logging in instead',
+          type: ToastificationType.error,
+        );
+      } else {
+        _toast.show(
+          message: e.message ?? 'Registration failed',
+          type: ToastificationType.error,
+        );
       }
-      _toast.show(message: errorMessage, type: ToastificationType.error);
-      debugPrint(e.toString());
+      return null;
+    } catch (e) {
+      _toast.show(message: 'Unexpected error', type: ToastificationType.error);
+      debugPrint('Signup error: ${e.toString()}');
       return null;
     }
   }
@@ -87,20 +123,39 @@ class AuthRepository {
         email: email,
         password: password,
       );
-      if (userCredential.user?.emailVerified != null) {
+
+      final user = userCredential.user;
+
+      if (user != null) {
+        if (user.emailVerified) {
+          _toast.show(
+            message: 'Login successful',
+            type: ToastificationType.success,
+          );
+        } else {
+          _toast.show(
+            message: 'Login awaiting email verification',
+            type: ToastificationType.info,
+          );
+        }
+      }
+
+      return user;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'network-request-failed') {
         _toast.show(
-          message: 'Login successfully',
-          type: ToastificationType.success,
+          message: 'No internet connection',
+          type: ToastificationType.error,
         );
-      } else if (userCredential.user != null) {
+      } else {
         _toast.show(
-          message: 'Login awaiting email verification',
-          type: ToastificationType.success,
+          message: e.message ?? 'Login failed',
+          type: ToastificationType.error,
         );
       }
-      return userCredential.user;
+      return null;
     } catch (e) {
-      _toast.show(message: 'Login failed', type: ToastificationType.error);
+      _toast.show(message: 'unexpected error', type: ToastificationType.error);
       return null;
     }
   }
@@ -136,7 +191,16 @@ class AuthRepository {
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut(WidgetRef ref) async {
+    await _googleSignIn.signOut();
     await _auth.signOut();
+    ref.invalidate(userProfileProvider);
+    ref.invalidate(profileImageProvider);
+    ref.invalidate(appUserProvider);
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(
+      '/login-screen',
+      (route) => false,
+    );
+    ref.invalidate(AuthLoader.selectedIndexProvider);
   }
 }

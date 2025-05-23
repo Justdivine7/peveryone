@@ -79,7 +79,7 @@ class ChatBubble extends StatelessWidget {
                         fit: BoxFit.cover,
                         placeholder:
                             (context, url) => CircularProgressIndicator(
-                              // strokeWidth: 2,
+                              strokeWidth: 1,
                               color: Colors.white,
                             ),
                         errorWidget:
@@ -87,7 +87,7 @@ class ChatBubble extends StatelessWidget {
                               color: Theme.of(context).indicatorColor,
                               child: Icon(
                                 Icons.image,
-                                size: 40,
+                                size: 35,
                                 color: Theme.of(context).hoverColor,
                               ),
                             ),

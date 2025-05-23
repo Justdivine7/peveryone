@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/presentation/providers/general_providers/global_providers.dart';
 import 'package:peveryone/presentation/providers/inbox_provider.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
-import 'package:peveryone/presentation/widgets/error_screen.dart';
-import 'package:peveryone/presentation/widgets/inbox_tile.dart';
+ import 'package:peveryone/presentation/widgets/inbox_tile.dart';
 
 class InboxView extends ConsumerStatefulWidget {
   static const routeName = '/inbox-screen';
@@ -79,63 +79,9 @@ class _InboxViewState extends ConsumerState<InboxView> {
                     return const Center(child: Text('No chats yet'));
                   }
                   final allList = inboxList.toList();
-                  // final topFive = inboxList.take(5).toList();
-                  // final remainingList =
-                  //     inboxList.length > 5 ? inboxList.skip(5).toList() : [];
+
                   return ListView(
                     children: [
-                      // const Text(
-                      //   'Top Chats',
-                      //   style: TextStyle(fontWeight: FontWeight.bold),
-                      // ),
-                      // // SizedBox(height: height(context, 0.01)),
-                      // SizedBox(
-                      //   height: height(context, 0.12),
-                      //   child: SingleChildScrollView(
-                      //     scrollDirection: Axis.horizontal,
-
-                      //     child: Row(
-                      //       children:
-                      //           topFive
-                      //               .map(
-                      //                 (inbox) => Padding(
-                      //                   padding: const EdgeInsets.only(
-                      //                     right: 8.0,
-                      //                   ), // spacing between items
-                      //                   child: TopChatBadge(
-                      //                     onTap: () {
-                      //                       Navigator.pushNamed(
-                      //                         context,
-                      //                         '/chat-room',
-                      //                         arguments: ChatRoom(
-                      //                           senderId: auth.currentUser!.uid,
-                      //                           receiverId: inbox.chatWith,
-                      //                           firstName: inbox.chatWithName,
-                      //                         ),
-                      //                       );
-                      //                     },
-                      //                     userName:
-                      //                         inbox.chatWithName.capitalize(),
-                      //                     image:
-                      //                         inbox.chatWithPhotoUrl != null &&
-                      //                                 inbox
-                      //                                     .chatWithPhotoUrl!
-                      //                                     .isNotEmpty
-                      //                             ? NetworkImage(
-                      //                               inbox.chatWithPhotoUrl!,
-                      //                             )
-                      //                             : AssetImage(
-                      //                                   'assets/images/dummy.png',
-                      //                                 )
-                      //                                 as ImageProvider,
-                      //                   ),
-                      //                 ),
-                      //               )
-                      //               .toList(),
-                      //     ),
-                      //   ),
-                      // ),
-                      // SizedBox(height: height(context, 0.01)),
                       const Text(
                         'All Chats',
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -148,9 +94,19 @@ class _InboxViewState extends ConsumerState<InboxView> {
                 },
                 error: (e, _) {
                   debugPrint('Inbox view error: $e');
-                  return ErrorScreen(error: e.toString());
+                  return Center(child: Text('An error occurred'));
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading:
+                    () => Center(
+                      child: Container(
+                        decoration: BoxDecoration(shape: BoxShape.circle),
+                        child: Lottie.asset(
+                          'assets/animations/loading.json',
+                          width: 150,
+                          height: 150,
+                        ),
+                      ),
+                    ),
               ),
             ),
           ],

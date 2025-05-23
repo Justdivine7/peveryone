@@ -5,10 +5,9 @@ import 'package:peveryone/core/constants/extensions.dart';
 import 'package:peveryone/core/helpers/chat_helpers.dart';
 import 'package:peveryone/core/helpers/ui_helpers.dart';
 import 'package:peveryone/data/model/message_model/message_model.dart';
- import 'package:peveryone/presentation/providers/inbox_provider.dart';
+import 'package:peveryone/presentation/providers/inbox_provider.dart';
 import 'package:peveryone/presentation/widgets/app_text_field.dart';
 import 'package:peveryone/presentation/widgets/chat_bubble.dart';
-import 'package:peveryone/presentation/widgets/error_screen.dart';
 
 class ChatRoom extends ConsumerStatefulWidget {
   final String senderId;
@@ -115,7 +114,7 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
                     },
                   );
                 },
-                error: (e, _) => ErrorScreen(error: e.toString()),
+                error: (e, _) => Center(child: Text('An error occurred')),
                 loading: () => Center(child: Text('loading conversations')),
               ),
             ),
