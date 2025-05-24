@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -97,51 +99,84 @@ class ChatBubble extends StatelessWidget {
                 ),
               ),
             if (isVideo)
-              GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder:
-                        (_) => Dialog(
-                          insetPadding: EdgeInsets.all(16),
-                          child: VideoPlayerWidget(
-                            videoUrl: message.content,
-                            isLocal: message.content.startsWith('/'),
-                          ),
-                        ),
-                  );
-                },
-                child: SizedBox(
-                  width: width(context, 0.6),
-                  height: height(context, 0.3),
-                  child: VideoThumbnailWidget(
-                    videoUrl: message.content,
-                    isLocal: message.content.startsWith('/'),
+            buildVideoMessage(context, message),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    DateFormat.Hm().format(message.sentAt),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: getStatusColor(context),
+                    ),
                   ),
-                ),
-              ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  DateFormat.Hm().format(message.sentAt),
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: getStatusColor(context),
-                  ),
-                ),
-                if (isMe) ...[
-                  const SizedBox(width: 4),
-                  Icon(
-                    getStatusIcon(message.status),
-                    size: 14,
-                    color: getStatusColor(context),
-                  ),
+                  if (isMe) ...[
+                    const SizedBox(width: 4),
+                    Icon(
+                      getStatusIcon(message.status),
+                      size: 14,
+                      color: getStatusColor(context),
+                    ),
+                  ],
                 ],
-              ],
-            ),
+              ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildVideoMessage(BuildContext context, MessageModel message) {
+    bool _isLocalFile(String path) {
+      // Check if it's a network URL
+      if (path.startsWith('http://') || path.startsWith('https://')) {
+        return false;
+      }
+      try {
+        // Check if it's a local file path
+        return File(path).existsSync();
+      } catch (e) {
+        return false;
+      }
+    }
+
+    String videoUrl;
+    bool isLocal;
+    if (message.localFilePath != null &&
+        message.localFilePath!.isNotEmpty &&
+        _isLocalFile(message.localFilePath!)) {
+      videoUrl = message.localFilePath!;
+      isLocal = true;
+    } else {
+      videoUrl = message.content;
+      isLocal = _isLocalFile(message.content);
+    }
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder:
+              (_) => Dialog(
+                backgroundColor: Colors.black12,
+                insetPadding: EdgeInsets.all(16),
+                child: Stack(
+                  children: [
+                    VideoPlayerWidget(videoUrl: videoUrl, isLocal: isLocal),
+                    Positioned(
+                      child: IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+        );
+      },
+      child: SizedBox(
+        width: width(context, 0.6),
+        height: height(context, 0.3),
+        child: VideoThumbnailWidget(videoUrl: videoUrl, isLocal: isLocal),
       ),
     );
   }

@@ -80,7 +80,7 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
             Expanded(

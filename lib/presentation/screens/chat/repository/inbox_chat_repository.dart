@@ -208,7 +208,21 @@ class InboxChatRepository {
     String senderId,
     String receiverId,
   ) async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.media);
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: [
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+        'mp4',
+        'mov',
+        'avi',
+        'mkv',
+        'webm',
+      ],
+      allowMultiple: false,
+    );
     if (result != null && result.files.single.path != null) {
       final file = File(result.files.single.path!);
       final mime = lookupMimeType(file.path);
