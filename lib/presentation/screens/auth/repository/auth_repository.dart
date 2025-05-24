@@ -23,7 +23,7 @@ class AuthRepository {
   User? get userDetails => _auth.currentUser;
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) return null;
@@ -37,11 +37,42 @@ class AuthRepository {
       UserCredential userCredential = await _auth.signInWithCredential(
         credential,
       );
+      User? user = userCredential.user;
+      if (user == null) return null;
+      final userDocRef = _firestore.collection('users').doc(user.uid);
+      final userDoc = await userDocRef.get();
+
+      if (!userDoc.exists) {
+        String displayName = user.displayName ?? '';
+        List<String> names = displayName.trim().split(" ");
+
+        String firstName = "";
+        String lastName = "";
+        if (names.isNotEmpty) {
+          firstName = names.first;
+          if (names.length > 1) {
+            lastName = names.sublist(1).join(" ");
+          }
+        }
+        final appUser = AppUserModel(
+          uid: user.uid,
+          email: user.email ?? '',
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          photoUrl: user.photoURL ?? '',
+        );
+        await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .set(appUser.toJson());
+      }
+
       _toast.show(
         message: 'Google sign in successful',
         type: ToastificationType.success,
       );
-      return userCredential;
+
+      return user;
     } catch (e) {
       debugPrint('Google sign-in failed: $e');
       _toast.show(
@@ -69,8 +100,8 @@ class AuthRepository {
 
       if (user != null) {
         final appUser = AppUserModel(
-          firstName: firstName,
-          lastName: lastName,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           uid: user.uid,
           email: email,
 

@@ -74,9 +74,9 @@ class _LoginViewState extends ConsumerState<LoginView> {
     final loading = ref.read(AuthLoader.registrationLoadingProvider.notifier);
     loading.state = true;
     final auth = ref.read(authRepositoryProvider);
-    final userCredential = await auth.signInWithGoogle();
+    final user = await auth.signInWithGoogle();
     loading.state = false;
-    if (userCredential?.user != null && context.mounted) {
+    if (user != null && context.mounted) {
       Navigator.pushReplacementNamed(context, '/base-view');
     } else {
       return null;
