@@ -1,8 +1,7 @@
-import 'dart:io';
+
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:peveryone/data/model/message_model/message_model.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
+ import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideoThumbnailWidget extends StatefulWidget {
   final String videoUrl;
@@ -57,7 +56,8 @@ class _VideoThumbnailWidgetState extends State<VideoThumbnailWidget> {
   @override
   Widget build(BuildContext context) {
     if (_error != null) {
-      return Container(
+    debugPrint(_error);
+         return Container(
         decoration: BoxDecoration(
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(12),

@@ -88,6 +88,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     if (_error != null) {
+      debugPrint(_error);
       return Container(
         padding: EdgeInsets.all(16),
         child: Center(

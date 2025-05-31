@@ -176,7 +176,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
                     AuthLogos(
                       onTap: googleSignIn,
-                      label: 'Sign up with',
+                      label: 'Sign in with',
                       image: 'assets/images/google.png',
                     ),
                     SizedBox(height: height(context, 0.02)),

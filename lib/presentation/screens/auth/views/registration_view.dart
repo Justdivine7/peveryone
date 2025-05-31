@@ -208,11 +208,11 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                           Navigator.pushNamed(context, LoginView.routeName);
                         },
                         richLabel: TextSpan(
-                          text: "Don't have an account?",
+                          text: "Already have an account?",
                           style: TextStyle(color: Colors.black),
                           children: [
                             TextSpan(
-                              text: "  Sign up",
+                              text: "  Sign In",
                               style: TextStyle(
                                 color: Theme.of(context).hoverColor,
                                 fontWeight: FontWeight.bold,
@@ -227,16 +227,16 @@ class _RegistrationViewState extends ConsumerState<RegistrationView> {
                     ),
                     SizedBox(height: height(context, 0.03)),
 
-                    Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        'By signing up you agree to our Terms and \nConditions of Use',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: Theme.of(context).dividerColor,
-                        ),
-                      ),
-                    ),
+                    // Center(
+                    //   child: Text(
+                    //     textAlign: TextAlign.center,
+                    //     'By signing up you agree to our Terms and \nConditions of Use',
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.w500,
+                    //       color: Theme.of(context).dividerColor,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

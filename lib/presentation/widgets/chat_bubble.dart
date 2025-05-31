@@ -127,7 +127,7 @@ class ChatBubble extends StatelessWidget {
   }
 
   Widget buildVideoMessage(BuildContext context, MessageModel message) {
-    bool _isLocalFile(String path) {
+    bool isLocalFile(String path) {
       // Check if it's a network URL
       if (path.startsWith('http://') || path.startsWith('https://')) {
         return false;
@@ -144,12 +144,12 @@ class ChatBubble extends StatelessWidget {
     bool isLocal;
     if (message.localFilePath != null &&
         message.localFilePath!.isNotEmpty &&
-        _isLocalFile(message.localFilePath!)) {
+        isLocalFile(message.localFilePath!)) {
       videoUrl = message.localFilePath!;
       isLocal = true;
     } else {
       videoUrl = message.content;
-      isLocal = _isLocalFile(message.content);
+      isLocal = isLocalFile(message.content);
     }
     return GestureDetector(
       onTap: () {
