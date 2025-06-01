@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
@@ -26,7 +27,8 @@ class ChatRoom extends ConsumerStatefulWidget {
   ConsumerState<ChatRoom> createState() => _ChatRoomState();
 }
 
-class _ChatRoomState extends ConsumerState<ChatRoom> {
+class _ChatRoomState extends ConsumerState<ChatRoom>
+    with WidgetsBindingObserver {
   final scrollController = ScrollController();
   final TextEditingController _chatController = TextEditingController();
 
@@ -50,14 +52,41 @@ class _ChatRoomState extends ConsumerState<ChatRoom> {
         .pickMediaAndSend(context, ref, widget.senderId, widget.receiverId);
   }
 
+  void _resetUnreadCount() async {
+    final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+    if (currentUserId == null) return;
+
+    final chatId = getChatId(currentUserId, widget.receiverId);
+    debugPrint("Resetting unread count for chatId: $chatId");
+
+    try {
+      await ref
+          .read(inboxChatRepositoryProvider)
+          .resetUnreadCount(chatId: chatId, userId: widget.receiverId);
+          
+    } catch (e, stack) {
+      debugPrint('Error resetting unread count: $e');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _resetUnreadCount();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Mark as read when app comes to foreground
+    }
   }
 
   @override
   void dispose() {
     _chatController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mime/mime.dart';
 import 'package:peveryone/core/constants/media_compresser.dart';
 import 'package:peveryone/core/constants/message_enum.dart';
+import 'package:peveryone/core/helpers/chat_helpers.dart';
 import 'package:peveryone/data/model/app_user_model/app_user_model.dart';
 import 'package:peveryone/data/model/inbox_model/inbox_model.dart';
 import 'package:peveryone/data/model/message_model/message_model.dart';
@@ -27,18 +28,13 @@ class InboxChatRepository {
     return AppUserModel.fromJson(doc.data()!);
   }
 
-  String _getChatId(String user1, String user2) {
-    final ids = [user1, user2]..sort();
-    return '${ids[0]}_${ids[1]}';
-  }
-
   Future<void> sendMessage({
     required String senderId,
     required String receiverId,
     required String content,
     required MessageType type,
   }) async {
-    final chatId = _getChatId(senderId, receiverId);
+    final chatId = getChatId(senderId, receiverId);
     final messageId = const Uuid().v4();
     final sentAt = DateTime.now();
 
@@ -62,26 +58,46 @@ class InboxChatRepository {
     final chatRef = _firestore.collection('chats').doc(chatId);
 
     await _firestore.runTransaction((transaction) async {
+      final chatDoc = await transaction.get(chatRef);
+      final currentData = chatDoc.data() ?? {};
+      final unreadCounts = Map<String, dynamic>.from(
+        currentData['unreadCounts'] ?? {},
+      );
+
+      // Update the nested object
+      unreadCounts[receiverId] = (unreadCounts[receiverId] ?? 0) + 1;
+
       transaction.set(messageRef, message.toJson());
       transaction.set(chatRef, {
         'lastMessage': content,
         'lastSenderId': senderId,
         'lastTimestamp': sentAt,
         'participants': [senderId, receiverId],
-        'unreadCounts.$receiverId': FieldValue.increment(1),
-        'unreadCounts.$senderId': 0, // Reset sender's unread count
+        'unreadCounts': unreadCounts,
         'lastMessageType': type.name,
       }, SetOptions(merge: true));
     });
     await messageRef.update({'status': MessageStatus.sent.name});
   }
 
+  Future<void> resetUnreadCount({
+  required String chatId,
+  required String userId,
+}) async {
+  final chatRef = FirebaseFirestore.instance.collection('chats').doc(chatId);
+
+  await chatRef.set({
+    'unreadCounts': {userId: 0},
+  }, SetOptions(merge: true));
+}
+
+
   Future<void> markMessagesAsDelivered(
     String receiverId,
     String senderId,
   ) async {
     try {
-      final chatId = _getChatId(senderId, receiverId);
+      final chatId = getChatId(senderId, receiverId);
       final messagesRef = _firestore
           .collection('chats')
           .doc(chatId)
@@ -138,7 +154,7 @@ class InboxChatRepository {
             'Raw unreadCounts from Firestore: $unreadCounts',
           ); // Add this
           debugPrint('Looking for unread count with key: $userId');
-          final unreadCount = data['unreadCounts.$userId'] as int? ?? 0;
+          final unreadCount = unreadCounts[userId] as int? ?? 0;
           debugPrint('Final unreadCount for $userId: $unreadCount'); // Add this
 
           list.add(
@@ -187,7 +203,7 @@ class InboxChatRepository {
   }
 
   Stream<List<MessageModel>> getMessages(String senderId, String receiverId) {
-    final chatId = _getChatId(senderId, receiverId);
+    final chatId = getChatId(senderId, receiverId);
     return _firestore
         .collection('chats')
         .doc(chatId)
@@ -230,7 +246,7 @@ class InboxChatRepository {
       final compressedFile =
           isVideo ? await compressVideo(file) : await compressImage(file);
 
-      final chatId = _getChatId(senderId, receiverId);
+      final chatId = getChatId(senderId, receiverId);
       final messageId = const Uuid().v4();
       final sentAt = DateTime.now();
       final localMessage = MessageModel(
